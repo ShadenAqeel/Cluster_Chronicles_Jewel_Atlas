@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#06080f">
+<title>Cluster Chronicles · حكايات العناقيد</title>
+<style>
+:root{
+  --bg:#06080f;--bg2:#0b1020;--panel:#10172a;--panel2:#161f38;
+  --line:rgba(255,255,255,.10);--line2:rgba(255,255,255,.20);
+  --ink:#f1f3fa;--sub:#a9b3ca;--mute:#8590ab;
+  --gold:#e8b765;--gold2:#f8dca0;
+  --k:#f2b24c;--d:#34d1b6;--p:#a58bff;--bad:#ff5d7a;--ok:#4fe3b0;
+  --accent:var(--gold);
+  --font:"Segoe UI",Tahoma,"Noto Sans Arabic","Noto Naskh Arabic",system-ui,-apple-system,Arial,sans-serif;
+  --serif:Georgia,"Times New Roman","Noto Naskh Arabic",serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+  background:
+    radial-gradient(900px 520px at 8% -8%,rgba(94,64,190,.34),transparent 62%),
+    radial-gradient(800px 520px at 100% 108%,rgba(20,150,150,.22),transparent 60%),
+    radial-gradient(700px 400px at 85% 0%,rgba(190,60,110,.14),transparent 60%),
+    var(--bg);
+  color:var(--ink);font:15px/1.6 var(--font);overflow-x:hidden;
+}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(rgba(248,220,160,.55) .8px,transparent 1.1px),radial-gradient(rgba(150,230,255,.4) .7px,transparent 1px);
+  background-size:83px 83px,131px 131px;background-position:0 0,41px 57px;animation:twinkle 7s ease-in-out infinite alternate}
+@keyframes twinkle{to{opacity:.18}}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--gold2);outline-offset:3px}
+button:disabled{opacity:.45;cursor:default}
+.hidden{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(100%)}
+#app{position:relative;z-index:1;max-width:1600px;margin:auto;padding:18px 22px 36px}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:14px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:13px}
+.mark{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(145deg,#2a2160,#0f1a33);border:1px solid rgba(232,183,101,.5);box-shadow:0 0 28px rgba(165,139,255,.35),inset 0 1px 0 rgba(255,255,255,.2)}
+.mark svg{width:26px;height:26px;animation:spin3d 6s ease-in-out infinite}
+@keyframes spin3d{0%,100%{transform:rotate(-6deg) scale(1)}50%{transform:rotate(6deg) scale(1.08)}}
+.brand b{display:block;font:800 20px/1.2 var(--serif);color:var(--gold2);letter-spacing:.02em}
+.brand small{display:block;color:var(--sub);font-size:12px;margin-top:2px}
+.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{border:1px solid var(--line2);background:rgba(255,255,255,.06);color:var(--ink);border-radius:11px;padding:8px 14px;font-size:13px;font-weight:700;transition:.2s}
+.btn:hover:not(:disabled){border-color:var(--gold);background:rgba(232,183,101,.14);transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(120deg,#f8dca0,#e8b765 55%,#d9863f);color:#1b1206;border-color:#fbe6b5;box-shadow:0 8px 28px rgba(232,183,101,.32);font-weight:800;font-size:15px;padding:11px 26px;position:relative;overflow:hidden}
+.btn.primary:hover:not(:disabled){box-shadow:0 12px 34px rgba(232,183,101,.5);transform:translateY(-2px);background:linear-gradient(120deg,#fff0c8,#f1c377 55%,#e59a52)}
+.btn.primary:disabled{filter:saturate(.3) brightness(.7)}
+.seg{display:inline-flex;border:1px solid var(--line2);border-radius:11px;overflow:hidden;background:rgba(255,255,255,.05)}
+.seg button{border:0;background:transparent;padding:8px 15px;font-size:13px;font-weight:800;color:var(--sub);transition:.2s}
+.seg button[aria-pressed=true]{background:linear-gradient(120deg,#f8dca0,#e8b765);color:#1b1206}
+.seg button:hover:not([aria-pressed=true]){color:#fff;background:rgba(255,255,255,.08)}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:18px;align-items:start}
+.stagecol{min-width:0;border-radius:20px;overflow:hidden;border:1px solid var(--line2);background:var(--panel);box-shadow:0 0 0 1px #000,0 0 80px rgba(123,77,255,.28),0 30px 80px rgba(0,0,0,.65)}
+.screen{position:relative;aspect-ratio:1200/680;background:#04060c;overflow:hidden;direction:inherit}
+canvas#game{display:block;width:100%;height:100%;touch-action:none}
+.vignette{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px rgba(2,3,10,.85);background:linear-gradient(180deg,rgba(3,5,12,.35),transparent 18%,transparent 80%,rgba(3,5,12,.45))}
+.pill{position:absolute;z-index:3;pointer-events:none;background:rgba(7,10,20,.74);border:1px solid var(--line2);color:var(--ink);backdrop-filter:blur(8px);border-radius:999px;font-size:12px;font-weight:700;padding:6px 14px}
+#chapterPill{top:14px;inset-inline-start:16px;letter-spacing:.02em}
+#chapterPill::before{content:"◆";color:var(--gold);margin-inline-end:8px;font-size:10px}
+#locationPill{top:14px;inset-inline-end:16px;color:var(--gold2)}
+#hintPill{bottom:14px;inset-inline-start:16px;max-width:76%;border-radius:12px;font-weight:600;line-height:1.55;padding:7px 14px;font-size:12.5px}
+#hintPill strong{color:var(--gold2)}
+.toast{position:absolute;z-index:20;left:50%;top:13%;transform:translate(-50%,-10px);max-width:min(660px,86%);background:rgba(9,13,26,.95);border:1px solid var(--gold);color:var(--ink);padding:11px 20px;border-radius:14px;font-size:14px;line-height:1.7;text-align:center;box-shadow:0 16px 50px rgba(0,0,0,.7),0 0 30px rgba(232,183,101,.18);opacity:0;pointer-events:none;transition:.25s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.bad{border-color:var(--bad);box-shadow:0 16px 50px rgba(0,0,0,.7),0 0 30px rgba(255,93,122,.22)}
+.reveal{position:absolute;z-index:9;pointer-events:none;top:20%;left:50%;transform:translate(-50%,0);text-align:center;min-width:min(520px,78%);padding:22px 28px;border-block:1px solid rgba(232,183,101,.55);background:linear-gradient(90deg,transparent,rgba(6,9,18,.92) 20%,rgba(6,9,18,.92) 80%,transparent);opacity:0;visibility:hidden}
+.reveal.on{visibility:visible;animation:revealIn 2.4s ease both}
+.reveal small{display:block;font-size:12px;letter-spacing:.28em;color:var(--gold);font-weight:800;margin-bottom:8px}
+.reveal b{display:block;font:800 clamp(22px,3.2vw,40px)/1.2 var(--serif);color:#fff;text-shadow:0 0 28px rgba(232,183,101,.55)}
+@keyframes revealIn{0%{opacity:0;transform:translate(-50%,-18px)}18%,70%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,8px)}}
+
+/* overlays */
+.overlay{position:absolute;inset:0;z-index:30;display:flex;padding:18px;background:radial-gradient(ellipse at 50% 30%,rgba(6,8,18,.55),rgba(3,4,10,.9));backdrop-filter:blur(3px);overflow:auto}
+.card{position:relative;margin:auto;width:min(900px,100%);border-radius:22px;border:1px solid var(--line2);background:linear-gradient(160deg,rgba(28,22,72,.97),rgba(10,15,32,.97));box-shadow:0 30px 90px rgba(0,0,0,.8),0 0 70px rgba(123,77,255,.22);padding:26px 30px;text-align:center;overflow:hidden}
+.card::before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.kicker{color:var(--gold);font-weight:800;font-size:12px;letter-spacing:.2em;text-transform:uppercase}
+html[dir=rtl] .kicker{letter-spacing:.04em;font-size:13px}
+.title{font:800 clamp(30px,4.4vw,58px)/1.12 var(--serif);margin:8px 0 6px;color:#fff6df;text-shadow:0 8px 40px rgba(232,183,101,.35)}
+.title em{font-style:normal;background:linear-gradient(90deg,#ff7aa8,#f8dca0,#6fe8cf,#b9a4ff,#ff7aa8);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shim 7s linear infinite}
+@keyframes shim{to{background-position:300% 0}}
+.lead{color:var(--sub);max-width:640px;margin:6px auto 16px;font-size:14px;line-height:1.85}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center}
+.choice{margin:0 auto 14px;max-width:560px;display:grid;gap:10px}
+.choice label{color:var(--gold2);font-size:12px;font-weight:800;letter-spacing:.04em}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pick button{display:flex;align-items:center;gap:12px;border:1px solid var(--line2);background:rgba(255,255,255,.05);border-radius:14px;padding:8px 14px;color:var(--ink);font-weight:800;font-size:14px;transition:.2s;text-align:start}
+.pick button canvas{width:52px;height:52px;flex:none;border-radius:10px;background:rgba(0,0,0,.35)}
+.pick button:hover{border-color:var(--gold);background:rgba(232,183,101,.1);transform:translateY(-2px)}
+.pick button[aria-pressed=true]{border-color:var(--gold2);background:linear-gradient(135deg,rgba(232,183,101,.26),rgba(165,139,255,.2));box-shadow:0 0 26px rgba(232,183,101,.3)}
+.cast{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 auto 16px;max-width:660px}
+.cast div{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:14px;padding:8px 12px;text-align:start}
+.cast canvas{width:46px;height:46px;flex:none;border-radius:10px;background:rgba(0,0,0,.35)}
+.cast b{display:block;font-size:13px;color:#fff;letter-spacing:.04em}
+.cast small{display:block;color:var(--sub);font-size:11.5px;line-height:1.4}
+.foot{color:var(--mute);font-size:11.5px;margin-top:12px;line-height:1.8}
+
+/* dialogue */
+.dialogue{position:absolute;z-index:25;inset-inline:16px;bottom:14px;display:flex;gap:16px;align-items:stretch;padding:14px 16px;border-radius:18px;background:linear-gradient(120deg,rgba(14,18,40,.97),rgba(24,22,60,.97));border:1px solid var(--line2);border-top:2px solid var(--accent);box-shadow:0 20px 70px rgba(0,0,0,.8),0 0 40px rgba(123,77,255,.2)}
+.portrait{width:92px;height:92px;flex:none;border-radius:14px;border:1px solid var(--line2);background:radial-gradient(circle at 50% 25%,rgba(255,255,255,.1),rgba(0,0,0,.4))}
+.dbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.speaker{font-weight:800;font-size:13px;letter-spacing:.06em;color:var(--accent)}
+.line{font-size:16px;line-height:1.85;color:var(--ink);min-height:58px}
+.dnav{display:flex;gap:8px;justify-content:flex-end;margin-top:auto}
+html[dir=rtl] .dnav{justify-content:flex-start}
+.small{border:1px solid var(--line2);background:rgba(255,255,255,.06);border-radius:9px;padding:6px 14px;font-size:12.5px;font-weight:800}
+.small:hover{border-color:var(--gold);background:rgba(232,183,101,.15)}
+.small.go{background:linear-gradient(120deg,#f8dca0,#e8b765);color:#1b1206;border-color:#fbe6b5}
+
+/* quiz + evidence + ending */
+.qcard{width:min(620px,100%)}
+.qcard h3{margin:4px 0 6px;font:800 24px/1.3 var(--serif);color:#fff6df}
+.qcard p{margin:0 0 10px;color:var(--ink);font-size:14.5px;line-height:1.85}
+.radar{position:relative;height:150px;margin:6px auto 12px;max-width:420px}
+.radar .ring{position:absolute;inset:6px 50px;border-radius:50%;border:2px dashed rgba(52,209,182,.7);background:radial-gradient(circle,rgba(52,209,182,.16),transparent 70%);animation:ringPulse 2.2s ease-in-out infinite}
+@keyframes ringPulse{50%{transform:scale(1.06);border-color:rgba(124,255,230,.95)}}
+.radar .dot{position:absolute;border-radius:50%;background:#7dffe6;box-shadow:0 0 8px #34d1b6;transform:translate(-50%,-50%)}
+.radar .dot.me{background:#fff;width:9px!important;height:9px!important;box-shadow:0 0 14px #fff}
+.eps{display:flex;gap:22px;justify-content:center;height:100%;align-items:center}
+.eps span{min-width:120px;border:1px solid rgba(52,209,182,.6);background:rgba(52,209,182,.1);padding:12px 8px;border-radius:14px;font-size:22px;font-weight:900;color:#c8fff4}
+.eps b{display:block;font-size:12px;margin-top:4px;color:var(--gold2)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.opt{border:1px solid var(--line2);background:rgba(255,255,255,.06);border-radius:13px;padding:13px 10px;font-weight:800;font-size:15px;color:#fff;transition:.2s}
+.opt:hover{border-color:var(--gold);background:linear-gradient(135deg,rgba(232,183,101,.24),rgba(165,139,255,.22));transform:translateY(-2px)}
+.note{margin-top:10px;font-size:12px;color:var(--sub);line-height:1.7}
+.metrics,.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+.metrics>div,.stats>div,.tcards>div,.chart{border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:13px;padding:10px 12px}
+.metrics b,.stats b{display:block;font-size:24px;color:var(--gold2);font-family:var(--serif)}
+.metrics small,.stats small{color:var(--sub);font-size:12px}
+.graphs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.chart h3{margin:0 0 6px;font-size:14px;color:#fff}
+.chart p{margin:6px 0 0;font-size:12.5px;color:var(--sub);line-height:1.7}
+.chart p b{color:var(--gold2)}
+.histo{height:96px;display:flex;align-items:flex-end;gap:7px;padding:4px 2px 0;border-bottom:1px solid var(--line2)}
+.bar-slot{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.bar{width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--gold2),#b5662d);min-height:3px;transform-origin:bottom;animation:grow .8s ease both}
+@keyframes grow{from{transform:scaleY(0)}}
+.bar-label{font-size:10px;color:var(--sub);margin-top:4px;white-space:nowrap}
+.insight{border:1px solid rgba(232,183,101,.4);background:rgba(232,183,101,.08);border-radius:13px;padding:10px 14px;margin-bottom:14px;font-size:13.5px;line-height:1.8;text-align:start}
+.truth{border:1px solid rgba(255,93,122,.4);background:rgba(255,93,122,.08);border-radius:14px;padding:12px 16px;margin:10px 0;text-align:start}
+.truth b{display:block;color:#ffc2cf;margin-bottom:4px;font-size:15px}
+.truth span{color:var(--ink);font-size:13.5px;line-height:1.8}
+.tcards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0;text-align:start}
+.tcards b{display:block;color:var(--gold2);font-size:14px;margin-bottom:3px}
+.tcards small{color:var(--sub);font-size:12px;line-height:1.7}
+.tiny{font-size:11.5px;color:var(--mute);line-height:1.8}
+.quote{margin:10px 0 14px;font:italic 15px/1.8 var(--serif);color:var(--gold2)}
+.crown{font-size:42px;color:var(--gold2);filter:drop-shadow(0 0 22px rgba(232,183,101,.8));animation:spin3d 4s ease-in-out infinite;display:inline-block}
+
+/* below-canvas bars */
+.abilities{display:none;gap:10px;justify-content:center;padding:10px;background:linear-gradient(100deg,#0f1630,#14243d);border-top:1px solid var(--line2)}
+.abilities.visible{display:flex}
+.skill{flex:1;max-width:240px;border:1px solid var(--line2);border-inline-start:4px solid var(--c);background:rgba(255,255,255,.06);border-radius:12px;padding:7px 12px;font-weight:800;font-size:13px;text-align:start;transition:.2s}
+.skill small{display:block;color:var(--sub);font-weight:600;font-size:11.5px}
+.skill:hover{background:rgba(255,255,255,.12);transform:translateY(-2px)}
+.skill kbd{display:inline-block;min-width:20px;text-align:center;background:var(--c);color:#10121c;border-radius:5px;padding:0 5px;margin-inline-end:6px;font:800 12px var(--font)}
+.statbar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding:11px 20px;background:linear-gradient(100deg,#141a38,#101a2e 60%,#0d2a3a);border-top:1px solid var(--line2);font-weight:700;font-size:14px}
+.statbar>span:last-child{text-align:end}
+.hearts{letter-spacing:3px;color:var(--bad);filter:drop-shadow(0 0 8px rgba(255,93,122,.5));font-size:16px}
+.hearts i{font-style:normal;color:rgba(255,255,255,.2)}
+.score{color:var(--gold2);font-family:var(--serif);font-size:18px;text-shadow:0 0 14px rgba(232,183,101,.5);display:inline-block}
+.score.pop{animation:pop .45s ease}
+@keyframes pop{45%{transform:scale(1.25);filter:brightness(1.5)}}
+.touch{display:none}
+
+/* side panel */
+.side{display:grid;gap:16px;padding:20px;border-radius:20px;border:1px solid var(--line2);background:linear-gradient(165deg,rgba(26,20,66,.95),rgba(11,16,32,.96));box-shadow:0 0 50px rgba(123,77,255,.18)}
+.eyebrow{color:var(--gold);font-weight:800;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase}
+html[dir=rtl] .eyebrow{letter-spacing:.03em;font-size:12.5px}
+.side h2{margin:4px 0 6px;font:800 23px/1.3 var(--serif);color:#fff6df}
+.side p{margin:0;color:var(--sub);font-size:13.5px;line-height:1.85}
+.steps{display:flex;gap:6px;margin:12px 0}
+.steps span{flex:1;height:6px;border-radius:4px;background:rgba(255,255,255,.14)}
+.steps .now{background:var(--gold);box-shadow:0 0 14px var(--gold)}
+.steps .done{background:var(--ok)}
+.guide{display:grid;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.guide>div{padding:9px 13px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.035)}
+.guide>div:last-child{border:0;background:rgba(232,183,101,.1)}
+.guide span{display:block;font-size:11px;font-weight:800;color:var(--gold);letter-spacing:.08em;text-transform:uppercase}
+html[dir=rtl] .guide span{letter-spacing:.02em;font-size:12px}
+.guide p{color:var(--ink);font-size:13px;line-height:1.75}
+.rule{height:1px;background:linear-gradient(90deg,transparent,rgba(232,183,101,.5),transparent)}
+.comp{display:flex;align-items:center;gap:11px;padding:7px 10px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.03);opacity:.5;transition:.35s;margin-top:8px}
+.comp canvas{width:44px;height:44px;border-radius:9px;background:rgba(0,0,0,.4);filter:grayscale(.8)}
+.comp b{display:block;font-size:13px;color:#fff;letter-spacing:.04em}
+.comp small{color:var(--sub);font-size:11.5px;line-height:1.4;display:block}
+.comp.joined{opacity:1;border-color:var(--c);background:rgba(255,255,255,.07);box-shadow:0 0 22px color-mix(in srgb,var(--c) 30%,transparent)}
+.comp.joined canvas{filter:none}
+.insightlog{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0 10px;color:var(--ink)!important}
+.keys{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.key{background:rgba(255,255,255,.08);border:1px solid var(--line2);border-radius:7px;padding:1px 9px;font-size:11.5px;font-weight:800;color:#fff}
+
+@media(max-width:980px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  #app{padding:12px}
+  .title{font-size:clamp(26px,7vw,44px)}
+  .cast small{display:none}
+  .tcards,.graphs,.metrics,.stats{grid-template-columns:1fr}
+  .line{font-size:14px;min-height:44px}
+  .portrait{width:64px;height:64px}
+  .card{padding:18px 14px}
+}
+@media(pointer:coarse){
+  .touch{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#0b1224;border-top:1px solid var(--line2);direction:ltr}
+  .dpad{display:grid;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(2,52px);gap:6px}
+  .dpad button,.tact button{border:1px solid var(--line2);background:rgba(255,255,255,.1);border-radius:14px;font-weight:800;color:#fff;touch-action:none;user-select:none}
+  .dpad .up{grid-column:2}.dpad .left{grid-row:2}.dpad .down{grid-row:2;grid-column:2}.dpad .right{grid-row:2;grid-column:3}
+  .tact{display:flex;gap:10px}.tact button{width:84px;height:52px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}}
+
+#endOverlay .card{padding:16px 26px}
+#endOverlay .title{font-size:clamp(26px,3.2vw,42px);margin:2px 0}
+#endOverlay .lead{margin:2px auto 8px;font-size:13.5px;line-height:1.7}
+#endOverlay .truth,#endOverlay .stats,#endOverlay .tcards{margin:6px 0}
+#endOverlay .stats b{font-size:20px}
+#endOverlay .quote{margin:6px 0 10px;font-size:14px}
+#endOverlay .crown{font-size:28px;line-height:1}
+#endOverlay .tiny{margin:4px 0}
+
+</style>
+</head>
+<body>
+<div id="app">
+<header class="top">
+  <div class="brand">
+    <div class="mark"><svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0c8"/><stop offset=".5" stop-color="#e8b765"/><stop offset="1" stop-color="#a58bff"/></linearGradient></defs><path d="M16 2 28 12 16 30 4 12Z" fill="url(#gg)"/><path d="M4 12h24M10 12l6-10 6 10M10 12l6 18 6-18" fill="none" stroke="#10142a" stroke-opacity=".55" stroke-width="1.2"/></svg></div>
+    <div><b data-ar="حكايات العناقيد" data-en="Cluster Chronicles"></b><small data-ar="رحلة تعليمية في عالم الألماس والبيانات" data-en="A data-science adventure through the diamond kingdom"></small></div>
+  </div>
+  <div class="actions">
+    <div class="seg" role="group" aria-label="Language / اللغة"><button type="button" id="langAr" aria-pressed="true">العربية</button><button type="button" id="langEn" aria-pressed="false">English</button></div>
+    <button class="btn" id="musicBtn" type="button"></button>
+    <button class="btn" id="resetBtn" type="button" data-ar="↻ إعادة" data-en="↻ Restart"></button>
+    <button class="btn" id="fullBtn" type="button" data-ar="⛶ ملء الشاشة" data-en="⛶ Fullscreen"></button>
+  </div>
+</header>
+
+<main class="layout">
+ <section class="stagecol" aria-label="game">
+  <div class="screen" id="screen">
+    <canvas id="game" width="1200" height="680" role="img" aria-label="game world"></canvas>
+    <div class="vignette"></div>
+    <div class="pill" id="chapterPill"></div>
+    <div class="pill" id="locationPill"></div>
+    <div class="pill" id="hintPill"></div>
+    <div class="reveal" id="reveal" aria-live="polite"><small id="revNo"></small><b id="revTitle"></b></div>
+    <div class="toast" id="toast"></div>
+
+    <div class="overlay" id="startOverlay">
+      <div class="card">
+        <div class="kicker" data-ar="حكايات العناقيد" data-en="Cluster Chronicles"></div>
+        <h1 class="title" data-h data-ar="التاج <em>المتصدّع</em>" data-en="The <em>Shattered</em> Crown"></h1>
+        <p class="lead"><span data-ar="كان التاج الملكي يكشف الأنماط الخفية في الألماس… حتى تحطّم وتبعثرت بلّوراته الست. " data-en="The royal crown once revealed the hidden patterns inside every diamond… until it broke and its six crystals scattered. "></span><span id="introRole"></span></p>
+        <div class="choice">
+          <label data-ar="اختر شخصيتك" data-en="CHOOSE YOUR KEEPER"></label>
+          <div class="pick">
+            <button type="button" id="chooseHe" aria-pressed="false"><canvas width="104" height="104" id="pvHe"></canvas><span data-ar="البطل · هو" data-en="Hero · he"></span></button>
+            <button type="button" id="chooseShe" aria-pressed="false"><canvas width="104" height="104" id="pvShe"></canvas><span data-ar="البطلة · هي" data-en="Heroine · she"></span></button>
+          </div>
+        </div>
+        <div class="cast">
+          <div><canvas width="92" height="92" id="pvK"></canvas><span><b>K-MEANS</b><small data-ar="القائد · يوزّع الألماس" data-en="Commander · groups diamonds"></small></span></div>
+          <div><canvas width="92" height="92" id="pvD"></canvas><span><b>DBSCAN</b><small data-ar="المحقق · يرصد المعزول" data-en="Tracker · spots outliers"></small></span></div>
+          <div><canvas width="92" height="92" id="pvP"></canvas><span><b>PCA</b><small data-ar="الحارسة · تختصر الأبعاد" data-en="Prism · reduces dimensions"></small></span></div>
+        </div>
+        <button class="btn primary" id="startBtn" disabled></button>
+        <div class="foot" data-h data-ar="WASD أو الأسهم للحركة · E للتفاعل · Space للاندفاع · 1 / 2 / 3 للقدرات" data-en="WASD or arrow keys to move · E to interact · Space to dash · 1 / 2 / 3 for abilities"></div>
+      </div>
+    </div>
+
+    <div class="dialogue hidden" id="dialogue">
+      <canvas class="portrait" id="portrait" width="184" height="184"></canvas>
+      <div class="dbody"><div class="speaker" id="dSpeaker"></div><div class="line" id="dLine"></div>
+        <div class="dnav"><button class="small" id="skipBtn" data-ar="تخطّي" data-en="Skip"></button><button class="small go" id="dNext"></button></div></div>
+    </div>
+
+    <div class="overlay hidden" id="quiz"><div class="card qcard">
+      <div class="kicker" id="qEyebrow"></div><h3 id="qTitle"></h3><p id="qDesc"></p>
+      <div class="radar" id="radar"></div>
+      <div class="opts"><button class="opt" id="qA"></button><button class="opt" id="qB"></button></div>
+      <div class="note" id="qFoot"></div>
+    </div></div>
+
+    <div class="overlay hidden" id="evidenceOverlay" role="dialog" aria-modal="true"><div class="card">
+      <div class="kicker" data-ar="سجل الأدلة الملكي · استكشاف البيانات" data-en="Royal evidence ledger · data exploration"></div>
+      <h2 class="title" style="font-size:clamp(24px,3vw,36px)" data-ar="ماذا تخبّئ الألماسات؟" data-en="What are the diamonds hiding?"></h2>
+      <p class="lead" data-ar="استعدت بلّورات التاج الست! يكشف السجل كيف رصد الباحثون أوزان الألماس وأبعاده، وما الذي سنحمله إلى محكمة K-Means." data-en="You have recovered the crown’s six crystals. This ledger shows how researchers recorded diamond weights and dimensions — and what we carry into K-Means’s court."></p>
+      <div class="metrics">
+        <div><b>53,893</b><small data-ar="ألماسة بعد التنظيف" data-en="diamonds after cleaning"></small></div>
+        <div><b>0</b><small data-ar="قيم ناقصة" data-en="missing values"></small></div>
+        <div><b>47</b><small data-ar="قياسات مستبعدة" data-en="measurements removed"></small></div>
+      </div>
+      <div class="graphs">
+        <section class="chart"><h3 data-ar="توزيع الوزن (قيراط)" data-en="Weight distribution (carat)"></h3><div class="histo" id="caratChart"></div><p data-h data-ar="<b>قرابة 65%</b> من الألماسات وزنها أقل من قيراط واحد." data-en="<b>About 65%</b> of diamonds weigh less than one carat."></p></section>
+        <section class="chart"><h3 data-ar="توزيع نسبة العمق" data-en="Depth percentage distribution"></h3><div class="histo" id="depthChart"></div><p data-h data-ar="<b>قرابة 87%</b> تتراوح نسبة عمقها بين 60% و64%." data-en="<b>About 87%</b> have a depth between 60% and 64%."></p></section>
+      </div>
+      <div class="insight" data-h data-ar="يوجد بعض القيم المتطرفة في الخصائص الفيزيائية. ووزن الألماسة مرتبط بالسعر ارتباطًا موجبًا قويًا (r ≈ 0.92)، لكن السعر <b>ليس ضمن خصائص التجميع الست</b>." data-en="Some physical features contain outliers. A diamond’s weight is strongly and positively correlated with its price (r ≈ 0.92) — yet price is <b>not one of the six clustering features</b>."></div>
+      <button class="btn primary" id="closeEvidence" data-ar="فهمت الأدلة · إلى محكمة K-Means ✦" data-en="Evidence understood · To K-Means’s court ✦"></button>
+    </div></div>
+
+    <div class="overlay hidden" id="endOverlay" role="dialog" aria-modal="true"><div class="card">
+      <span class="crown">♛</span>
+      <div class="kicker" data-ar="الفصل الأخير · الحقيقة الكاملة" data-en="Final chapter · The whole truth"></div>
+      <h1 class="title" data-h data-ar="عاد <em>التاج</em> إلى نوره" data-en="The <em>Crown</em> Shines Again"></h1>
+      <p class="lead" id="endingHero"></p>
+      <div class="truth"><b data-ar="المفاجأة: لم يسرق الحراس البلّورات." data-en="The twist: the guardians never stole the crystals."></b><span data-ar="خبّأوا أجزاء المعرفة حتى لا يظن أحد أن طريقة واحدة تكشف كل الحقيقة. جمع الحارس الأدلة، وفهم أن لكل طريقة دورًا وحدودًا." data-en="They hid the fragments of knowledge so that no one would believe a single method reveals the whole truth. The Keeper gathered the evidence and learned that every method has a role — and limits."></span></div>
+      <div class="stats"><div><b id="endScore">0</b><small data-ar="النقاط النهائية" data-en="final score"></small></div><div><b>2</b><small data-ar="مجموعتان في K-Means" data-en="clusters found by K-Means"></small></div><div><b>88.12%</b><small data-ar="التباين المحفوظ بمكوّنين" data-en="variance kept by two components"></small></div></div>
+      <div class="tcards">
+        <div><b data-ar="K-Means · ينظّم" data-en="K-Means · organizes"></b><small data-ar="مجموعتان تختلفان أساسًا في الحجم، وتختلف أسعارهما الوسيطة رغم استبعاد السعر من التجميع." data-en="Two groups that differ mainly in size — and in median price, even though price was excluded from clustering."></small></div>
+        <div><b data-ar="DBSCAN · يشكّك" data-en="DBSCAN · questions"></b><small data-ar="يفحص الكثافة ويحدد نقاط Noise بحسب الإعدادات؛ ليست بالضرورة ألماسًا معيبًا." data-en="It inspects density and labels Noise points according to its settings — they are not necessarily defective diamonds."></small></div>
+        <div><b data-ar="PCA · يكشف" data-en="PCA · reveals"></b><small data-ar="ست خصائص أصبحت مكوّنين يحتفظان بـ88.12% من التباين، مع فقدان قدر من المعلومات." data-en="Six features became two components that keep 88.12% of the variance — at the cost of some lost information."></small></div>
+      </div>
+      <p class="tiny" data-h data-ar="المقارنة: Silhouette قبل PCA = 0.429 (فضاء 6D)، وبعده = 0.487 (فضاء 2D). الارتفاع لا يثبت تحسّن التجميع لأن المقاييس محسوبة في فضاءين مختلفين.<br>DBSCAN قبل PCA: مجموعتان و804 Noise؛ بعده مع إعدادات مختلفة: مجموعة واحدة و311 Noise." data-en="Comparison: Silhouette before PCA = 0.429 (6D space), after = 0.487 (2D space). The rise does not prove better clustering, because the two scores are computed in different spaces.<br>DBSCAN before PCA: 2 clusters and 804 Noise points; after, with different settings: 1 cluster and 311 Noise points."></p>
+      <p class="quote" data-ar="«بحثنا عن الحقيقة داخل كل حجر، ولم نرَ الأنماط التي تربط الأحجار ببعضها.»" data-en="“We searched for the truth inside every stone, and never saw the patterns that bind the stones together.”"></p>
+      <button class="btn primary" id="playAgain" data-ar="↻ رحلة جديدة" data-en="↻ New journey"></button>
+    </div></div>
+  </div>
+
+  <div class="abilities" id="abilities">
+    <button class="skill" data-skill="K" style="--c:var(--k)"><kbd>1</kbd>K-MEANS<small data-ar="يوزّع الألماس" data-en="groups diamonds"></small></button>
+    <button class="skill" data-skill="D" style="--c:var(--d)"><kbd>2</kbd>DBSCAN<small data-ar="يكشف المعزول" data-en="finds outliers"></small></button>
+    <button class="skill" data-skill="P" style="--c:var(--p)"><kbd>3</kbd>PCA<small data-ar="يختصر الأبعاد" data-en="reduces dimensions"></small></button>
+  </div>
+  <div class="statbar"><span class="hearts" id="hearts"></span><span>✦ <span class="score" id="score">000000</span></span><span id="taskCounter"></span></div>
+  <div class="touch" id="touch"><div class="dpad"><button class="up" data-dir="up">▲</button><button class="left" data-dir="left">◀</button><button class="down" data-dir="down">▼</button><button class="right" data-dir="right">▶</button></div><div class="tact"><button id="tDash">⇢</button><button id="tAct">E</button></div></div>
+ </section>
+
+ <aside class="side">
+  <div>
+    <div class="eyebrow" data-ar="سجل المهمة" data-en="Quest log"></div>
+    <h2 id="qTitleSide"></h2><p id="qDescSide"></p>
+    <div class="steps" id="steps"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="guide">
+      <div><span data-ar="لماذا؟" data-en="Why?"></span><p id="qWhy"></p></div>
+      <div><span data-ar="ماذا تفعل؟" data-en="What to do"></span><p id="qHow"></p></div>
+      <div><span data-ar="الهدف التالي" data-en="Next objective"></span><p id="qNext"></p></div>
+    </div>
+  </div>
+  <div class="rule"></div>
+  <div>
+    <div class="eyebrow" data-ar="رفقاء المغامرة" data-en="Companions"></div>
+    <div class="comp" id="allyK" style="--c:var(--k)"><canvas width="88" height="88" id="cvK"></canvas><div><b>K-MEANS</b><small data-ar="أقرب مركز · k = 2" data-en="nearest centroid · k = 2"></small></div></div>
+    <div class="comp" id="allyD" style="--c:var(--d)"><canvas width="88" height="88" id="cvD"></canvas><div><b>DBSCAN</b><small data-ar="الكثافة والضوضاء · eps" data-en="density & noise · eps"></small></div></div>
+    <div class="comp" id="allyP" style="--c:var(--p)"><canvas width="88" height="88" id="cvP"></canvas><div><b>PCA</b><small data-ar="ست خصائص ← مكوّنان" data-en="six features → two components"></small></div></div>
+  </div>
+  <div class="rule"></div>
+  <div>
+    <div class="eyebrow" data-ar="سجل الاكتشافات" data-en="Discovery log"></div>
+    <p id="lastInsight" class="insightlog"></p>
+    <button class="btn" id="evidenceBtn" type="button" disabled data-ar="عرض سجل الأدلة" data-en="Open evidence ledger"></button>
+  </div>
+  <div class="rule"></div>
+  <div>
+    <div class="eyebrow" data-ar="التحكم" data-en="Controls"></div>
+    <div class="keys"><span class="key">W A S D</span><span class="key" data-ar="الأسهم" data-en="Arrows"></span><span class="key" data-ar="E تفاعل" data-en="E interact"></span><span class="key" data-ar="SPACE اندفاع" data-en="SPACE dash"></span></div>
+    <p data-ar="تجنّب الحرّاس الآليين. الاندفاع يمنحك لحظة حصانة قصيرة." data-en="Avoid the hazards. Dashing grants a brief moment of invulnerability."></p>
+  </div>
+ </aside>
+</main>
+<div class="sr" id="ariaStatus" aria-live="polite"></div>
+</div>
+<script>
+const DATA={"meta":{"rows":53893,"rawRows":53940,"removed":47,"variance2":0.8812206,"varianceEach":[0.666825,0.214396],"kmeans_k":2,"kmeans_before_sil":0.429,"kmeans_after_sil":0.487,"dbscan_before_eps":0.5,"dbscan_after_eps":0.3,"dbscan_before_clusters":2,"dbscan_after_clusters":1,"dbscan_before_noise":804,"dbscan_after_noise":311,"ari":0.997996,"pcaByN":{"2":88.12,"3":99.46,"4":99.98,"5":99.99,"6":100}},"points":[[-2.564,-5.018,0,0,-1,-1,0.23,327],[-0.073,0.662,0,0,0,0,0.74,2760],[0.676,-5.193,1,1,-1,-1,0.76,2800],[1.328,-6.088,1,1,-1,-1,0.96,2815],[-0.018,0.014,0,0,0,0,0.72,2831],[0.071,-2.192,0,0,0,0,0.7,2833],[0.288,-4.797,0,0,-1,0,0.71,2858],[0.77,-6.853,1,1,-1,-1,0.75,2859],[-0.162,0.403,0,0,0,0,0.71,2863],[0.492,-5.997,1,1,-1,-1,0.72,2879],[1.089,-4.89,1,1,-1,-1,0.88,2882],[0.656,-4.472,1,1,-1,-1,0.8,2885],[0.174,0.326,0,0,0,0,0.79,2896],[0.737,-5.84,1,1,-1,-1,0.75,2940],[-0.178,0.35,0,0,0,0,0.71,2965],[-2.911,0.078,0,0,0,0,0.25,560],[0.003,-1.433,0,0,0,0,0.72,2979],[0.211,-0.444,0,0,0,0,0.78,3004],[0.187,1.056,0,0,0,0,0.81,3059],[0.968,0.371,1,1,0,0,0.94,3079],[1.464,4.225,1,1,-1,-1,1.16,3118],[0.887,4.531,1,1,-1,0,1.0,3142],[0.149,1.141,0,0,0,0,0.8,3154],[0.687,-0.041,1,1,0,0,0.9,3160],[0.634,0.884,1,1,0,0,0.9,3188],[0.024,0.329,0,0,0,0,0.74,3228],[0.758,1.187,1,1,0,0,0.9,3246],[0.29,-0.942,1,1,0,0,0.77,3299],[-0.15,-0.421,0,0,0,0,0.7,3303],[-0.218,1.423,0,0,0,0,0.72,3330],[0.758,0.762,1,1,0,0,0.91,3357],[-0.067,0.723,0,0,0,0,0.73,3370],[1.272,1.023,1,1,0,0,1.07,3415],[1.986,0.863,1,1,0,0,1.21,3415],[0.369,0.133,1,1,0,0,0.82,3428],[0.897,-2.395,1,1,0,0,0.91,3438],[1.009,0.706,1,1,0,0,1.0,3465],[0.638,0.892,1,1,0,0,0.9,3473],[2.07,-1.719,1,1,0,0,1.19,3508],[1.301,0.373,1,1,0,0,1.05,3528],[0.134,0.375,0,0,0,0,0.78,3537],[0.774,5.326,1,1,-1,-1,0.99,3593],[0.956,-0.888,1,1,0,0,0.93,3594],[1.02,3.536,1,1,-1,0,1.01,3597],[0.705,0.481,1,1,0,0,0.9,3679],[-2.234,0.406,0,0,0,0,0.33,572],[-0.228,1.214,0,0,0,0,0.72,3690],[0.679,0.895,1,1,0,0,0.9,3724],[2.822,3.166,1,1,-1,0,1.52,3745],[-2.474,1.307,0,0,0,0,0.3,574],[1.149,0.421,1,1,0,0,1.0,3788],[0.271,-0.075,1,1,0,0,0.79,3818],[-2.381,-0.844,0,0,0,0,0.3,574],[1.03,-2.063,1,1,0,0,0.95,3830],[1.265,-0.238,1,1,0,0,1.02,3856],[0.833,-0.482,1,1,0,0,0.9,3856],[1.627,4.967,1,1,-1,-1,1.21,3862],[-2.774,-0.363,0,0,0,0,0.25,575],[-0.098,0.928,0,0,0,0,0.73,3900],[1.046,-3.686,1,1,0,0,0.92,3924],[0.901,-1.049,1,1,0,0,0.91,3986],[0.701,0.133,1,1,0,0,0.9,3997],[-0.74,-0.141,0,0,0,0,0.56,4025],[0.96,0.25,1,1,0,0,0.94,4027],[0.589,1.132,1,1,0,0,0.9,4036],[0.682,-0.233,1,1,0,0,0.9,4054],[1.919,2.352,1,1,-1,0,1.24,4058],[-2.753,-1.703,0,0,0,0,0.25,577],[-1.854,-5.268,0,0,-1,-1,0.31,579],[1.633,-5.578,1,1,-1,-1,1.01,4118],[1.295,-0.08,1,1,0,0,1.03,4153],[2.033,4.065,1,1,-1,-1,1.36,4158],[1.141,0.89,1,1,0,0,1.01,4189],[1.115,-0.302,1,1,0,0,1.01,4191],[0.672,0.575,1,1,0,0,0.91,4199],[0.608,1.306,1,1,0,0,0.9,4223],[-2.212,0.089,0,0,0,0,0.33,579],[0.776,0.503,1,1,0,0,0.9,4234],[1.376,0.292,1,1,0,0,1.05,4234],[0.91,-1.108,1,1,0,0,0.93,4256],[1.101,-0.059,1,1,0,0,1.0,4260],[1.294,0.285,1,1,0,0,1.03,4274],[1.342,0.733,1,1,0,0,1.07,4276],[1.287,0.181,1,1,0,0,1.03,4283],[2.624,4.027,1,1,-1,-1,1.5,4284],[0.794,1.093,1,1,0,0,0.9,4309],[2.743,4.41,1,1,-1,-1,1.5,4328],[-2.994,0.131,0,0,0,0,0.23,583],[1.108,0.27,1,1,0,0,1.01,4338],[1.593,-5.346,1,1,-1,-1,1.0,4368],[1.247,0.229,1,1,0,0,1.02,4370],[1.286,0.381,1,1,0,0,1.04,4375],[1.012,4.826,1,1,-1,-1,1.02,4398],[0.695,-0.977,1,1,0,0,0.9,4419],[0.658,0.633,1,1,0,0,0.9,4455],[0.952,5.75,1,1,-1,-1,1.02,4455],[-2.659,3.353,0,0,-1,-1,0.3,586],[-2.295,0.09,0,0,0,0,0.32,589],[1.361,-1.056,1,1,0,0,1.03,4522],[1.793,0.935,1,1,0,0,1.2,4596],[1.018,-2.045,1,1,0,0,1.01,4632],[0.823,0.291,1,1,0,0,0.92,4637],[-2.31,-1.164,0,0,0,0,0.32,589],[-2.79,-0.593,0,0,0,0,0.26,590],[-2.497,0.579,0,0,0,0,0.3,590],[2.174,-0.694,1,1,0,0,1.27,4660],[1.286,-0.044,1,1,0,0,1.03,4679],[1.547,0.55,1,1,0,0,1.11,4687],[0.809,0.141,1,1,0,0,0.9,4693],[2.634,4.801,1,1,-1,-1,1.5,4704],[0.629,0.943,1,1,0,0,0.9,4715],[0.909,-3.115,1,1,0,0,0.9,4717],[1.649,-1.236,1,1,0,0,1.1,4725],[0.859,2.784,1,1,0,0,1.0,4732],[1.214,0.956,1,1,0,0,1.01,4766],[1.161,0.266,1,1,0,0,1.01,4769],[-2.344,-0.041,0,0,-1,0,0.29,592],[0.841,-0.22,1,1,0,0,0.93,4793],[0.914,-0.162,1,1,0,0,0.93,4834],[0.972,1.285,1,1,0,0,1.0,4844],[-2.239,0.094,0,0,0,0,0.33,594],[1.181,-0.313,1,1,0,0,1.01,4853],[1.192,0.104,1,1,0,0,1.03,4874],[1.521,-2.383,1,1,-1,0,1.0,4892],[1.344,-1.361,1,1,0,0,1.01,4899],[1.174,-0.366,1,1,0,0,1.01,4916],[1.398,1.519,1,1,0,0,1.09,4920],[2.524,3.786,1,1,-1,-1,1.5,4939],[2.137,-2.443,1,1,0,0,1.22,4969],[1.492,-2.523,1,1,0,0,1.01,4989],[1.465,-0.335,1,1,0,0,1.09,5005],[1.04,0.901,1,1,0,0,1.01,5006],[1.374,0.788,1,1,0,0,1.09,5022],[1.668,3.34,1,1,-1,-1,1.21,5028],[1.183,0.736,1,1,0,0,1.02,5038],[0.828,0.091,1,1,0,0,0.91,5057],[1.4,-5.631,1,1,-1,-1,0.93,5078],[1.388,-1.218,1,1,0,0,1.03,5111],[1.202,0.338,1,1,0,0,1.01,5113],[1.185,0.381,1,1,0,0,1.01,5113],[1.652,1.263,1,1,0,0,1.18,5163],[1.482,0.188,1,1,0,0,1.09,5165],[1.999,0.379,1,1,0,0,1.24,5221],[0.613,0.509,1,1,0,0,0.9,5226],[1.196,0.469,1,1,0,0,1.03,5234],[3.456,3.332,1,1,-1,-1,1.72,5240],[1.628,0.096,1,1,0,0,1.13,5280],[0.121,-0.45,0,0,0,0,0.75,5288],[1.526,-1.807,1,1,0,0,1.04,5311],[1.359,-0.559,1,1,0,0,1.05,5347],[1.966,-0.085,1,1,0,0,1.21,5353],[2.062,-1.581,1,1,0,0,1.21,5364],[0.962,1.111,1,1,0,0,1.0,5396],[1.551,0.707,1,1,0,0,1.12,5456],[1.223,-1.083,1,1,0,0,1.02,5500],[1.202,-0.287,1,1,0,0,1.01,5519],[2.059,-1.728,1,1,0,0,1.21,5556],[1.137,1.698,1,1,0,0,1.04,5557],[1.219,0.732,1,1,0,0,1.04,5577],[-2.299,0.046,0,0,0,0,0.33,604],[1.81,1.361,1,1,0,0,1.19,5622],[0.981,1.225,1,1,0,0,1.0,5645],[1.572,0.908,1,1,0,0,1.15,5646],[1.347,0.942,1,1,0,0,1.07,5661],[1.364,-1.351,1,1,0,0,1.01,5701],[-2.286,-1.14,0,0,0,0,0.3,605],[1.71,1.076,1,1,0,0,1.19,5802],[1.376,0.684,1,1,0,0,1.09,5816],[2.422,-3.446,1,1,-1,0,1.25,5851],[1.551,-4.368,1,1,-1,0,1.0,5853],[1.036,0.813,1,1,0,0,1.0,5887],[3.975,5.578,1,1,-1,-1,2.0,5914],[0.958,1.735,1,1,0,0,1.0,5914],[2.408,1.082,1,1,0,0,1.38,5969],[2.952,0.805,1,1,0,0,1.54,5994],[3.564,2.29,1,1,-1,0,1.73,6007],[1.185,0.416,1,1,0,0,1.03,6036],[1.433,-1.831,1,1,0,0,1.03,6091],[1.042,0.248,1,1,0,0,0.99,6094],[2.209,0.395,1,1,0,0,1.29,6097],[2.079,-2.092,1,1,0,0,1.2,6129],[1.184,0.721,1,1,0,0,1.03,6183],[2.014,0.188,1,1,0,0,1.22,6184],[1.88,1.507,1,1,0,0,1.22,6250],[1.688,0.049,1,1,0,0,1.14,6256],[1.515,2.799,1,1,-1,0,1.2,6344],[2.17,-1.886,1,1,-1,0,1.2,6344],[2.004,0.022,1,1,0,0,1.22,6372],[2.736,-3.725,1,1,-1,-1,1.36,6397],[1.27,-2.574,1,1,0,0,1.01,6399],[0.815,-0.387,1,1,0,0,0.9,6441],[1.1,0.67,1,1,0,0,1.0,6468],[6.828,2.015,1,1,-1,-1,3.0,6512],[1.161,-0.507,1,1,0,0,1.0,6535],[-2.128,-1.551,0,0,0,0,0.33,608],[-2.106,-1.074,0,0,0,0,0.33,608],[4.521,5.478,1,1,-1,-1,2.22,6564],[1.031,1.212,1,1,0,0,1.02,6569],[1.2,-0.191,1,1,0,0,1.01,6630],[1.904,-0.133,1,1,0,0,1.19,6662],[-2.122,-2.418,0,0,0,0,0.31,421],[1.204,-0.451,1,1,0,0,1.01,6707],[4.368,1.314,1,1,0,0,2.0,6854],[4.869,5.716,1,1,-1,-1,2.32,6860],[1.515,1.06,1,1,0,0,1.13,6891],[2.222,0.501,1,1,0,0,1.3,6931],[1.165,0.05,1,1,0,0,1.01,6956],[4.452,1.017,1,1,0,0,2.01,7024],[2.259,-4.781,1,1,-1,-1,1.16,7094],[1.24,0.393,1,1,0,0,1.0,7134],[-1.391,4.394,0,0,-1,-1,0.5,613],[-2.265,0.338,0,0,0,0,0.33,614],[2.232,-1.315,1,1,0,0,1.27,7176],[1.574,0.648,1,1,0,0,1.14,7199],[2.099,-1.004,1,1,0,0,1.25,7246],[3.109,-4.078,1,1,-1,0,1.5,7300],[2.299,0.099,1,1,0,0,1.33,7302],[3.35,-5.144,1,1,-1,-1,1.44,7338],[1.089,1.242,1,1,0,0,1.0,7350],[2.914,0.984,1,1,0,0,1.52,7370],[1.687,1.579,1,1,0,0,1.19,7466],[2.645,4.413,1,1,-1,-1,1.51,7468],[-2.884,1.0,0,0,0,0,0.26,618],[2.275,0.357,1,1,0,0,1.31,7527],[2.708,3.219,1,1,-1,0,1.51,7534],[3.039,-0.04,1,1,0,0,1.53,7539],[1.533,0.393,1,1,0,0,1.11,7602],[1.953,-0.799,1,1,0,0,1.2,7603],[1.391,0.641,1,1,0,0,1.08,7625],[3.018,-1.739,1,1,-1,0,1.53,7643],[1.211,-0.555,1,1,0,0,1.0,7822],[1.732,1.33,1,1,0,0,1.21,7826],[1.008,0.698,1,1,0,0,1.0,7849],[2.061,-0.294,1,1,0,0,1.25,8036],[2.203,3.098,1,1,-1,-1,1.4,8216],[1.229,-0.622,1,1,0,0,1.02,8244],[1.176,1.232,1,1,0,0,1.04,8268],[3.207,-0.549,1,1,0,0,1.56,8324],[3.431,-2.026,1,1,0,0,1.58,8583],[3.332,3.028,1,1,-1,-1,1.73,8703],[3.108,0.87,1,1,0,0,1.6,8779],[2.865,0.354,1,1,0,0,1.5,8820],[2.121,0.136,1,1,0,0,1.27,8915],[1.474,0.127,1,1,0,0,1.09,8970],[2.329,-1.029,1,1,0,0,1.3,9051],[1.229,-1.074,1,1,0,0,1.01,9065],[2.01,0.023,1,1,0,0,1.23,9116],[3.506,-0.497,1,1,0,0,1.7,9225],[3.196,0.234,1,1,0,0,1.59,9385],[4.167,1.49,1,1,0,0,2.0,9435],[-2.029,-1.75,0,0,0,0,0.34,626],[2.97,0.423,1,1,0,0,1.51,9513],[1.81,-1.445,1,1,0,0,1.13,9539],[3.124,-0.651,1,1,0,0,1.52,9789],[3.061,-1.743,1,1,0,0,1.5,9827],[3.269,-2.595,1,1,0,0,1.53,10076],[3.175,-0.177,1,1,0,0,1.56,10090],[3.471,-1.51,1,1,0,0,1.63,10216],[2.086,0.394,1,1,0,0,1.26,10284],[6.559,-0.399,1,1,-1,-1,2.77,10424],[3.092,-1.54,1,1,0,0,1.52,10433],[6.21,-0.281,1,1,-1,-1,2.63,10437],[1.241,1.177,1,1,0,0,1.07,10453],[1.963,-0.189,1,1,0,0,1.21,10483],[2.886,0.356,1,1,0,0,1.5,10618],[6.21,-0.281,1,1,-1,-1,2.63,10628],[2.548,3.883,1,1,-1,-1,1.5,10644],[-2.848,3.77,0,0,-1,-1,0.3,630],[3.003,0.114,1,1,0,0,1.53,10729],[7.155,-3.888,1,1,-1,-1,3.0,10863],[1.275,0.327,1,1,0,0,1.02,10967],[1.921,1.137,1,1,0,0,1.25,10983],[2.324,0.987,1,1,0,0,1.33,11023],[1.221,0.003,1,1,0,0,1.02,11128],[3.946,-3.524,1,1,-1,-1,1.7,11180],[2.731,1.1,1,1,0,0,1.5,11189],[4.814,-5.273,1,1,-1,-1,2.0,11202],[3.084,1.285,1,1,0,0,1.59,11251],[2.981,0.833,1,1,0,0,1.53,11379],[-2.598,1.49,0,0,0,0,0.3,421],[-2.404,-0.282,0,0,0,0,0.3,422],[2.863,1.058,1,1,0,0,1.53,11525],[5.006,0.227,1,1,0,0,2.18,11579],[5.889,-1.806,1,1,-1,-1,2.45,11843],[3.595,0.736,1,1,0,0,1.71,11873],[3.521,0.356,1,1,0,0,1.7,11888],[4.689,1.689,1,1,0,0,2.15,12100],[4.578,-1.078,1,1,0,0,2.01,12423],[4.79,-3.835,1,1,-1,0,2.0,12610],[3.228,0.01,1,1,0,0,1.6,12871],[3.797,0.64,1,1,0,0,1.81,12939],[2.976,-0.454,1,1,0,0,1.5,13001],[-2.336,0.125,0,0,0,0,0.32,639],[-2.194,-2.846,0,0,0,0,0.31,639],[3.201,-1.323,1,1,0,0,1.56,13079],[6.536,-12.539,1,1,-1,-1,2.01,13387],[3.55,-1.426,1,1,-1,0,1.68,13445],[4.913,-2.487,1,1,-1,0,2.01,13587],[5.695,-4.616,1,1,-1,-1,2.29,13701],[3.03,-0.145,1,1,0,0,1.54,13733],[2.766,1.424,1,1,0,0,1.51,13757],[4.339,1.747,1,1,-1,0,2.0,13764],[2.872,0.859,1,1,0,0,1.52,13768],[5.063,-0.595,1,1,0,0,2.21,14032],[5.122,-0.651,1,1,0,0,2.3,14042],[6.152,-2.968,1,1,-1,-1,2.51,14251],[4.75,1.11,1,1,0,0,2.15,14388],[4.167,3.924,1,1,-1,0,2.01,14402],[3.05,0.012,1,1,0,0,1.51,14844],[5.039,-0.545,1,1,0,0,2.18,14870],[2.943,0.091,1,1,0,0,1.51,14889],[7.197,-2.68,1,1,-1,-1,3.0,14918],[4.891,-3.027,1,1,-1,0,2.06,14920],[9.342,-0.698,1,1,-1,-1,4.01,15223],[-2.304,0.913,0,0,0,0,0.32,645],[4.198,4.892,1,1,-1,-1,2.0,15351],[4.528,-0.633,1,1,-1,0,2.06,15393],[4.912,-2.339,1,1,-1,0,2.01,15618],[2.788,1.791,1,1,0,0,1.52,15649],[4.688,0.453,1,1,0,0,2.08,15654],[7.636,4.934,1,1,-1,-1,3.4,15964],[9.142,1.404,1,1,-1,-1,4.0,15984],[6.996,0.384,1,1,-1,-1,3.01,16037],[6.216,-0.437,1,1,-1,-1,2.65,16314],[4.671,-0.384,1,1,0,0,2.07,16378],[5.273,-4.258,1,1,-1,-1,2.1,16506],[2.997,-1.287,1,1,0,0,1.5,16558],[5.308,-2.263,1,1,-1,0,2.18,16690],[6.02,-0.515,1,1,0,-1,2.57,17116],[4.845,1.484,1,1,0,0,2.22,17160],[-2.391,0.632,0,0,0,0,0.32,645],[6.331,1.166,1,1,-1,-1,2.74,17184],[3.576,-0.613,1,1,0,0,1.7,17228],[5.375,2.398,1,1,-1,-1,2.44,17472],[-2.483,-1.312,0,0,0,0,0.28,646],[5.302,1.018,1,1,0,0,2.32,18080],[5.87,-1.73,1,1,-1,-1,2.5,18447],[10.153,2.801,1,1,-1,-1,4.5,18531],[3.603,2.896,1,1,-1,-1,2.01,18574],[7.067,-0.437,1,1,-1,-1,3.01,18710],[-2.758,-0.11,0,0,0,0,0.26,657],[-2.193,-0.051,0,0,0,0,0.32,657],[-2.654,-1.444,0,0,0,0,0.26,658],[-2.297,0.283,0,0,0,0,0.33,666],[-2.194,-0.414,0,0,0,0,0.32,365],[-2.317,0.482,0,0,0,0,0.33,666],[-2.809,-1.234,0,0,0,0,0.23,680],[-1.968,-0.469,0,0,0,0,0.37,682],[-2.175,-3.156,0,0,0,0,0.31,435],[-2.233,0.704,0,0,0,0,0.34,689],[-2.437,0.168,0,0,0,0,0.31,698],[-2.303,0.639,0,0,0,0,0.33,699],[-2.386,0.58,0,0,0,0,0.32,702],[-2.479,0.424,0,0,0,0,0.3,439],[-2.308,-1.343,0,0,0,0,0.3,442],[-2.367,-0.486,0,0,0,0,0.31,707],[-1.681,-1.968,0,0,0,0,0.38,719],[-1.859,1.342,0,0,0,0,0.41,719],[-2.278,-0.078,0,0,0,0,0.33,723],[-2.265,-0.181,0,0,0,0,0.33,727],[-2.484,0.573,0,0,0,0,0.31,734],[-2.394,-0.741,0,0,0,0,0.3,447],[-2.445,-0.559,0,0,0,0,0.3,447],[-2.266,-2.021,0,0,0,0,0.3,447],[-1.715,1.539,0,0,0,0,0.41,735],[-2.321,0.845,0,0,0,0,0.33,743],[-2.406,0.942,0,0,0,0,0.32,449],[-2.015,0.506,0,0,0,0,0.37,747],[-1.328,-4.523,0,0,-1,-1,0.41,758],[-2.384,0.017,0,0,0,0,0.32,758],[-1.772,1.111,0,0,0,0,0.4,765],[-2.163,0.457,0,0,0,0,0.34,765],[-2.168,0.494,0,0,0,0,0.35,773],[-2.471,0.01,0,0,0,0,0.3,776],[-1.483,-0.001,0,0,0,0,0.44,778],[-2.345,-0.27,0,0,0,0,0.3,787],[-2.418,-0.491,0,0,0,0,0.3,454],[-2.692,0.103,0,0,0,0,0.27,799],[-2.369,0.24,0,0,0,0,0.31,802],[-2.276,0.745,0,0,0,0,0.34,805],[-1.609,0.642,0,0,0,0,0.44,807],[-1.763,-0.29,0,0,0,0,0.4,807],[-1.857,1.038,0,0,0,0,0.4,810],[-2.99,1.044,0,0,0,0,0.25,460],[-2.302,-0.274,0,0,0,0,0.31,816],[-2.2,0.239,0,0,0,0,0.34,819],[-2.327,0.222,0,0,0,0,0.33,824],[-1.562,-1.647,0,0,0,0,0.41,827],[-2.407,0.579,0,0,0,0,0.32,828],[-1.757,0.482,0,0,0,0,0.41,830],[-1.547,-1.148,0,0,0,0,0.42,838],[-2.472,0.677,0,0,0,0,0.31,840],[-1.096,-4.2,0,0,-1,0,0.47,844],[-2.427,-0.09,0,0,0,0,0.31,464],[-0.634,-4.906,0,0,-1,-1,0.5,851],[-2.006,0.772,0,0,0,0,0.38,853],[-2.501,0.63,0,0,0,0,0.3,862],[-1.606,0.747,0,0,0,0,0.44,869],[-2.53,-0.596,0,0,0,0,0.27,470],[-2.535,-1.479,0,0,0,0,0.27,470],[-2.392,0.172,0,0,0,0,0.31,872],[-2.548,1.183,0,0,0,0,0.31,872],[-1.524,-4.226,0,0,-1,-1,0.38,886],[-1.719,-3.285,0,0,-1,0,0.38,886],[-1.779,-0.492,0,0,0,0,0.39,889],[-2.458,0.775,0,0,0,0,0.31,891],[-2.301,0.535,0,0,0,0,0.33,893],[-2.272,-0.62,0,0,0,0,0.31,897],[-2.4,0.683,0,0,0,0,0.32,900],[-1.06,-4.265,0,0,-1,0,0.48,907],[-2.39,-0.222,0,0,0,0,0.3,476],[-2.386,-4.434,0,0,-1,-1,0.25,476],[-2.045,2.663,0,0,0,-1,0.4,925],[-2.383,0.217,0,0,0,0,0.32,936],[-1.775,0.955,0,0,0,0,0.4,945],[-2.226,-1.039,0,0,0,0,0.32,952],[-1.322,-0.292,0,0,0,0,0.46,952],[-2.383,-0.91,0,0,0,0,0.3,956],[-2.123,0.148,0,0,0,0,0.34,956],[-2.295,-1.038,0,0,0,0,0.3,956],[-2.158,-5.15,0,0,-1,-1,0.28,480],[-2.473,1.345,0,0,0,0,0.32,972],[-1.488,-2.294,0,0,-1,0,0.4,974],[-1.128,-4.455,0,0,-1,0,0.44,974],[-2.279,-0.427,0,0,0,0,0.32,480],[-1.901,0.419,0,0,0,0,0.39,978],[-1.49,-3.607,0,0,0,0,0.4,981],[-2.358,0.219,0,0,0,0,0.32,984],[-2.114,0.803,0,0,0,0,0.37,997],[-2.318,0.119,0,0,0,0,0.33,1002],[-1.092,-1.521,0,0,0,0,0.49,1011],[-1.427,-2.052,0,0,0,0,0.42,1013],[-2.407,-5.999,0,0,-1,-1,0.25,1013],[-1.632,-0.992,0,0,0,0,0.41,1015],[-0.733,2.852,0,0,0,-1,0.6,1033],[-1.85,-1.165,0,0,0,0,0.37,1038],[-1.876,1.881,0,0,0,0,0.39,1049],[-2.17,-1.198,0,0,0,0,0.33,1052],[-1.802,0.219,0,0,0,0,0.4,1056],[-1.651,-1.261,0,0,0,0,0.41,1076],[-1.868,-2.138,0,0,0,0,0.35,491],[-1.945,0.111,0,0,0,0,0.38,1100],[-2.023,0.149,0,0,0,0,0.37,1103],[-1.613,-0.434,0,0,0,0,0.42,1103],[-2.394,0.016,0,0,0,0,0.31,1105],[-2.68,2.009,0,0,0,0,0.28,492],[-0.723,-3.673,0,0,-1,0,0.5,1114],[-0.892,-2.173,0,0,0,0,0.52,1121],[-1.849,0.735,0,0,0,0,0.4,1125],[-1.079,-1.829,0,0,0,0,0.48,1130],[-1.495,-2.109,0,0,0,0,0.41,1130],[-0.889,-1.497,0,0,0,0,0.53,1132],[-2.816,0.035,0,0,0,0,0.26,499],[-1.112,-0.038,0,0,0,0,0.52,1158],[-1.224,1.661,0,0,0,0,0.51,1172],[-1.237,1.764,0,0,0,0,0.51,1180],[-1.123,-4.655,0,0,-1,-1,0.45,1180],[-1.117,-2.299,0,0,-1,0,0.25,1186],[-0.757,-0.113,0,0,0,0,0.59,1195],[-1.123,0.949,0,0,0,0,0.52,1229],[-1.791,-1.375,0,0,0,0,0.39,1232],[-2.864,-1.363,0,0,0,0,0.24,393],[-2.477,-0.651,0,0,0,0,0.29,504],[-1.055,-1.725,0,0,0,0,0.5,1240],[-1.123,-4.655,0,0,-1,-1,0.45,1240],[-1.124,-1.924,0,0,0,0,0.47,1244],[-0.863,-3.166,0,0,-1,0,0.53,1246],[-2.895,-1.04,0,0,0,0,0.23,505],[-1.025,1.625,0,0,0,0,0.55,1263],[-0.559,-4.923,0,0,-1,-1,0.53,1286],[-0.914,-1.439,0,0,0,0,0.51,1304],[-0.738,-3.414,0,0,-1,0,0.5,1327],[-0.593,-2.261,0,0,0,0,0.58,1332],[-1.029,1.417,0,0,0,0,0.54,1338],[-0.894,-0.213,0,0,0,0,0.54,1350],[-1.038,-2.08,0,0,0,0,0.5,1354],[-1.059,0.739,0,0,0,0,0.54,1389],[-2.469,0.847,0,0,0,0,0.3,506],[-2.465,0.484,0,0,0,0,0.3,507],[-1.11,-0.282,0,0,0,0,0.51,1403],[-0.651,-1.493,0,0,0,0,0.58,1408],[-0.956,-3.158,0,0,0,0,0.5,1415],[-0.744,-0.713,0,0,-1,0,0.52,1427],[0.421,-6.151,1,1,-1,-1,0.67,1436],[-0.905,-0.317,0,0,0,0,0.54,1439],[0.027,-5.234,0,0,-1,-1,0.63,1440],[-0.893,-4.237,0,0,-1,0,0.5,1446],[-0.433,1.197,0,0,0,0,0.67,1550],[-0.573,0.317,0,0,0,0,0.62,1563],[-1.291,1.076,0,0,0,0,0.5,1569],[-1.102,0.223,0,0,0,0,0.52,1576],[-0.723,0.113,0,0,0,0,0.58,1600],[-2.682,0.512,0,0,0,0,0.28,522],[-0.767,-0.255,0,0,0,0,0.57,1613],[-1.191,0.431,0,0,0,0,0.5,1629],[-1.213,1.454,0,0,0,0,0.51,1638],[-1.115,0.734,0,0,0,0,0.53,1639],[-0.593,0.636,0,0,0,0,0.62,1652],[-0.917,0.29,0,0,0,0,0.56,1672],[-1.259,1.242,0,0,0,0,0.5,1676],[-0.852,-2.726,0,0,0,0,0.5,1684],[-1.149,0.687,0,0,0,0,0.52,1689],[-0.359,0.074,0,0,0,0,0.66,1708],[0.967,4.05,1,1,-1,0,0.98,1712],[-0.989,-0.852,0,0,0,0,0.53,1721],[-1.1,0.476,0,0,0,0,0.53,1727],[-0.933,1.113,0,0,0,0,0.57,1728],[-1.28,0.929,0,0,0,0,0.5,1746],[-1.143,-0.189,0,0,0,0,0.5,1746],[-0.947,0.087,0,0,0,0,0.54,1751],[-0.245,0.544,0,0,0,0,0.7,1767],[-0.811,1.419,0,0,0,0,0.6,1772],[0.757,-0.644,1,1,0,0,0.9,1777],[-0.868,-2.907,0,0,-1,0,0.52,1784],[-2.517,0.006,0,0,0,0,0.3,526],[-1.047,-1.249,0,0,0,0,0.5,1799],[-0.829,-0.111,0,0,0,0,0.56,1814],[-1.075,-0.391,0,0,0,0,0.52,1815],[-0.732,-0.504,0,0,0,0,0.56,1819],[-1.337,1.54,0,0,0,0,0.5,1819],[-0.281,5.02,0,0,-1,-1,0.7,1828],[-0.177,0.669,0,0,0,0,0.71,1841],[-0.381,1.938,0,0,0,0,0.7,1851],[-1.168,0.886,0,0,0,0,0.52,1872],[-2.252,0.383,0,0,0,0,0.34,530],[-0.825,-0.111,0,0,0,0,0.56,1882],[-1.099,-1.804,0,0,-1,0,0.51,1885],[-0.358,2.742,0,0,-1,0,0.7,1896],[-0.765,-3.26,0,0,-1,0,0.5,1939],[-0.107,-0.22,0,0,0,0,0.69,1951],[-3.095,0.472,0,0,0,0,0.23,536],[-0.635,0.929,0,0,0,0,0.62,1959],[-0.349,-2.226,0,0,0,0,0.61,1971],[-0.661,-0.09,0,0,0,0,0.59,1982],[-0.677,-0.351,0,0,0,0,0.58,1984],[-0.063,0.322,0,0,0,0,0.72,1988],[-1.078,0.381,0,0,0,0,0.53,2005],[-0.226,0.101,0,0,0,0,0.7,2020],[0.074,0.43,0,0,0,0,0.75,2025],[0.526,-2.923,1,1,0,0,0.76,2036],[-0.229,0.137,0,0,0,0,0.71,2076],[-0.902,-0.489,0,0,0,0,0.55,2098],[-1.21,0.214,0,0,0,0,0.5,2104],[-0.705,0.619,0,0,0,0,0.6,2130],[-0.046,0.436,0,0,0,0,0.71,2137],[-0.067,-4.912,0,0,-1,-1,0.6,2167],[0.196,0.694,1,0,-1,0,0.74,2193],[-0.135,0.933,0,0,0,0,0.71,2225],[0.247,1.625,1,1,0,0,0.82,2232],[-0.173,2.089,0,0,-1,0,0.7,2241],[-0.272,-0.935,0,0,0,0,0.64,2243],[1.081,0.669,1,1,0,0,1.01,2257],[-0.183,-1.163,0,0,0,0,0.66,2275],[-0.129,-0.107,0,0,0,0,0.7,2288],[0.749,-2.832,1,1,-1,0,0.81,2301],[-0.93,0.341,0,0,0,0,0.56,2321],[-0.048,-0.144,0,0,0,0,0.71,2327],[0.097,-0.221,0,0,0,0,0.72,2352],[0.816,-7.866,1,1,-1,-1,0.71,2368],[0.032,0.626,0,0,0,0,0.74,2375],[-0.246,0.708,0,0,0,0,0.7,2382],[-0.007,0.059,0,0,0,0,0.72,2418],[-0.48,-0.202,0,0,0,0,0.61,2429],[-0.154,0.916,0,0,0,0,0.72,2440],[0.603,-4.784,1,1,-1,0,0.71,2458],[0.292,-3.964,0,0,0,0,0.7,2475],[-0.581,-1.124,0,0,0,0,0.6,2485],[-0.185,0.037,0,0,0,0,0.7,2492],[-0.514,-0.858,0,0,0,0,0.62,2501],[-0.781,-0.472,0,0,0,0,0.57,2507],[1.123,-6.356,1,1,-1,-1,0.82,2508],[-0.063,0.174,0,0,0,0,0.71,2517],[0.813,-6.702,1,1,-1,-1,0.76,2518],[0.155,-2.498,0,0,0,0,0.71,2528],[-2.457,1.561,0,0,0,0,0.32,550],[-0.195,-0.172,0,0,0,0,0.7,2551],[-0.687,-0.42,0,0,0,0,0.59,2553],[0.122,-1.328,0,0,0,0,0.74,2574],[0.129,0.858,0,0,0,0,0.76,2579],[0.104,0.773,0,0,0,0,0.78,2596],[0.028,0.278,0,0,0,0,0.74,2617],[0.013,1.191,0,0,-1,0,0.74,2617],[-0.168,0.618,0,0,0,0,0.71,2633],[-0.347,1.353,0,0,0,0,0.7,2635],[-0.161,0.611,0,0,0,0,0.71,2637],[1.696,2.265,1,1,0,0,1.2,2655],[0.167,1.106,0,0,0,0,0.8,2657],[0.107,0.945,0,0,0,0,0.78,2664],[0.172,-1.16,0,0,0,0,0.75,2680],[0.821,-2.401,1,1,0,0,0.9,2681],[0.344,6.879,1,1,-1,-1,0.9,2691],[0.001,-0.861,0,0,0,0,0.72,2697],[0.149,0.592,0,0,0,0,0.76,2719],[0.964,-5.118,1,1,-1,-1,0.84,2724],[-0.068,0.463,0,0,0,0,0.73,2728],[-0.148,0.092,0,0,0,0,0.7,2728]],"cases":[{"carat":0.41,"depth":62.3,"table":56.0,"x":4.77,"y":4.74,"z":2.96,"price":999,"cut":"Ideal","class":0,"pc1":-1.77,"pc2":0.58},{"carat":0.41,"depth":61.4,"table":55.0,"x":4.83,"y":4.78,"z":2.95,"price":1107,"cut":"Ideal","class":0,"pc1":-1.79,"pc2":0.42},{"carat":0.41,"depth":61.6,"table":56.0,"x":4.76,"y":4.78,"z":2.94,"price":1007,"cut":"Very Good","class":0,"pc1":-1.77,"pc2":0.22},{"carat":0.41,"depth":61.4,"table":58.0,"x":4.78,"y":4.76,"z":2.93,"price":1015,"cut":"Premium","class":0,"pc1":-1.67,"pc2":-0.48},{"carat":0.41,"depth":60.8,"table":57.0,"x":4.77,"y":4.8,"z":2.91,"price":1007,"cut":"Ideal","class":0,"pc1":-1.73,"pc2":-0.49},{"carat":0.41,"depth":62.1,"table":56.0,"x":4.76,"y":4.74,"z":2.95,"price":999,"cut":"Ideal","class":0,"pc1":-1.78,"pc2":0.48},{"carat":1.11,"depth":61.3,"table":55.0,"x":6.65,"y":6.73,"z":4.1,"price":4578,"cut":"Ideal","class":1,"pc1":1.45,"pc2":0.63},{"carat":1.11,"depth":64.0,"table":58.0,"x":6.52,"y":6.46,"z":4.16,"price":5632,"cut":"Ideal","class":1,"pc1":1.48,"pc2":1.13},{"carat":1.11,"depth":65.7,"table":61.0,"x":6.42,"y":6.39,"z":4.21,"price":5178,"cut":"Fair","class":1,"pc1":1.6,"pc2":1.11},{"carat":1.11,"depth":61.8,"table":56.0,"x":6.66,"y":6.69,"z":4.12,"price":9734,"cut":"Ideal","class":1,"pc1":1.51,"pc2":0.59},{"carat":1.11,"depth":61.3,"table":56.0,"x":6.68,"y":6.74,"z":4.12,"price":6129,"cut":"Ideal","class":1,"pc1":1.54,"pc2":0.33},{"carat":1.11,"depth":60.2,"table":59.0,"x":6.67,"y":6.79,"z":4.05,"price":11330,"cut":"Very Good","class":1,"pc1":1.67,"pc2":-1.14}],"densityCases":[{"type":"core","neighbors":55,"carat":0.37,"depth":59.9,"x":4.71,"pc1":-1.98,"pc2":-0.37},{"type":"noise","neighbors":1,"carat":0.49,"depth":57.5,"x":5.18,"pc1":-0.7,"pc2":-5.47},{"type":"core","neighbors":179,"carat":1.7,"depth":61.7,"x":7.62,"pc1":3.49,"pc2":0.27},{"type":"noise","neighbors":1,"carat":0.72,"depth":68.4,"x":5.38,"pc1":0.02,"pc2":1.47},{"type":"core","neighbors":83,"carat":1.0,"depth":61.3,"x":6.37,"pc1":0.87,"pc2":0.89},{"type":"noise","neighbors":6,"carat":2.5,"depth":65.1,"x":8.55,"pc1":5.73,"pc2":1.75}]};
+'use strict';
+/* ============ core ============ */
+const $=id=>document.getElementById(id);
+const canvas=$('game'),ctx=canvas.getContext('2d',{alpha:false}),W=1200,H=680,TAU=Math.PI*2,HZ=300;
+const S=Math.min(1.5,Math.max(1,window.devicePixelRatio||1));
+canvas.width=Math.round(W*S);canvas.height=Math.round(H*S);
+const rand=(a,b)=>a+Math.random()*(b-a),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+const FONT='"Segoe UI",Tahoma,"Noto Sans Arabic",system-ui,sans-serif';
+let LANG='ar';try{LANG=localStorage.getItem('cc_lang')||'ar'}catch(e){}
+if(LANG!=='ar'&&LANG!=='en')LANG='ar';
+const b=(ar,en)=>({ar,en});
+const val=v=>typeof v==='function'?v():v;
+const T=o=>val(LANG==='ar'?o.ar:o.en);
+const L=(ar,en)=>LANG==='ar'?ar:en;
+let gender=null;const G=(m,f)=>gender==='female'?f:m;
+const arN=(n,one,two,many)=>n===1?one:n===2?two:`${n} ${many}`;
+let seed=7;const srnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+
+const _hc={};
+function rg(h,a=1){const k=h+a;if(_hc[k])return _hc[k];const n=parseInt(h.slice(1),16);return(_hc[k]=`rgba(${n>>16},${n>>8&255},${n&255},${a})`)}
+function shade(h,k=.45){const n=parseInt(h.slice(1),16);return`rgb(${(n>>16)*k|0},${(n>>8&255)*k|0},${(n&255)*k|0})`}
+function glow(c,x,y,r,col,a=.5){const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,rg(col,a));g.addColorStop(1,rg(col,0));c.fillStyle=g;c.fillRect(x-r,y-r,r*2,r*2)}
+function ell(c,x,y,rx,ry,fill,stroke,lw=1){c.beginPath();c.ellipse(x,y,rx,ry,0,0,TAU);if(fill){c.fillStyle=fill;c.fill()}if(stroke){c.strokeStyle=stroke;c.lineWidth=lw;c.stroke()}}
+function rr(c,x,y,w,h,r,fill,stroke,lw=1){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill()}if(stroke){c.strokeStyle=stroke;c.lineWidth=lw;c.stroke()}}
+function poly(c,pts,fill,stroke,lw=1){c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();if(fill){c.fillStyle=fill;c.fill()}if(stroke){c.strokeStyle=stroke;c.lineWidth=lw;c.lineJoin='round';c.stroke()}}
+function ln(c,x,y,X,Y,col,w=1){c.beginPath();c.moveTo(x,y);c.lineTo(X,Y);c.strokeStyle=col;c.lineWidth=w;c.stroke()}
+function lg(c,x0,y0,x1,y1,stops){const g=c.createLinearGradient(x0,y0,x1,y1);stops.forEach(([o,col])=>g.addColorStop(o,col));return g}
+function txt(c,s,x,y,size=14,col='#fff',w=700,al='center',dir){c.font=`${w} ${size}px ${FONT}`;c.textAlign=al;c.textBaseline='middle';c.fillStyle=col;c.direction=dir||(LANG==='ar'?'rtl':'ltr');c.fillText(s,x,y)}
+function label(c,x,y,s,col,size=12){c.font=`800 ${size}px ${FONT}`;c.direction=LANG==='ar'?'rtl':'ltr';const w=c.measureText(s).width+30;rr(c,x-w/2,y-12,w,24,12,'rgba(6,9,18,.86)',rg(col,.85),1.2);ell(c,x-w/2+12,y,3,3,col);txt(c,s,x+5,y+1,size,'#fff',800)}
+
+/* ============ audio ============ */
+let audioCtx=null,musicOn=true,musicTimer=null,musicBeat=0,musicBus=null,sfxBus=null;
+function audioReady(){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
+ if(!musicBus){musicBus=audioCtx.createGain();musicBus.gain.value=.24;musicBus.connect(audioCtx.destination);sfxBus=audioCtx.createGain();sfxBus.gain.value=.5;sfxBus.connect(audioCtx.destination)}return true}catch(e){return false}}
+function tone(f,when,dur,vol,kind='sine',bus){if(!audioCtx||!bus)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=kind;o.frequency.setValueAtTime(f,when);g.gain.setValueAtTime(.0001,when);g.gain.linearRampToValueAtTime(vol,when+.02);g.gain.exponentialRampToValueAtTime(.0001,when+dur);o.connect(g);g.connect(bus);o.start(when);o.stop(when+dur+.03)}
+const NOTES=[220,261.63,329.63,261.63,196,261.63,293.66,246.94,220,261.63,329.63,392,293.66,261.63,196,246.94],BASS=[110,98,130.81,123.47];
+function ambientTick(){if(!musicOn||!audioCtx||audioCtx.state!=='running')return;const t=audioCtx.currentTime+.02,n=musicBeat++;tone(NOTES[n%16],t,1.1,.03,'sine',musicBus);if(n%4===0)tone(BASS[(n/4|0)%4],t,3,.025,'triangle',musicBus);if(n%8===5)tone(NOTES[n%16]*2,t,.6,.012,'sine',musicBus)}
+function startAmbience(){if(!musicOn){stopAmbience();return}if(!audioReady())return;if(musicTimer===null){ambientTick();musicTimer=setInterval(ambientTick,700)}}
+function stopAmbience(){if(musicTimer!==null){clearInterval(musicTimer);musicTimer=null}}
+function snd(k){if(!audioCtx||!sfxBus||audioCtx.state!=='running')return;const t=audioCtx.currentTime;
+ if(k==='ping'){tone(880,t,.25,.12,'sine',sfxBus);tone(1318,t+.07,.3,.09,'sine',sfxBus)}
+ else if(k==='win'){[523,659,784,1046].forEach((f,i)=>tone(f,t+i*.09,.5,.12,'triangle',sfxBus))}
+ else if(k==='hurt'){tone(150,t,.3,.2,'sawtooth',sfxBus);tone(95,t+.05,.3,.15,'square',sfxBus)}
+ else if(k==='dash'){tone(420,t,.12,.08,'triangle',sfxBus);tone(640,t+.04,.12,.06,'triangle',sfxBus)}
+ else if(k==='wrong'){tone(220,t,.22,.12,'square',sfxBus);tone(165,t+.1,.25,.1,'square',sfxBus)}
+ else if(k==='portal'){tone(392,t,.4,.1,'sine',sfxBus);tone(587,t+.12,.5,.1,'sine',sfxBus);tone(784,t+.24,.6,.1,'sine',sfxBus)}}
+
+/* ============ characters ============ */
+const CHR={
+ H:{base:'#17324d',base2:'#08121f',trim:'#e8b765',gem:'#8be9ff',hair:'#2b2030'},
+ HF:{base:'#36234f',base2:'#150d27',trim:'#e8b765',gem:'#ffa6df',hair:'#2b1736'},
+ K:{base:'#52370f',base2:'#1c1206',trim:'#f2b24c',gem:'#ffd47a',hair:'#3a2610'},
+ D:{base:'#0f4146',base2:'#041618',trim:'#34d1b6',gem:'#7dffe6',hair:'#0b2a30'},
+ P:{base:'#34287a',base2:'#110b2c',trim:'#a58bff',gem:'#e2d6ff',hair:'#e9e1ff'}
+};
+function gem(c,x,y,r,col,t=0,spin=0,halo=true){
+ const w=r*(.5+.5*Math.abs(Math.cos(t*1.3+spin)));
+ if(halo)glow(c,x,y,r*2.7,col,.4);
+ c.save();c.translate(x,y);
+ const q=[[0,-r*1.25],[w,-r*.4],[w*.78,r*.55],[0,r*1.2],[-w*.78,r*.55],[-w,-r*.4]];
+ poly(c,q,lg(c,-w,-r,w,r,[[0,'#ffffff'],[.38,col],[1,shade(col,.5)]]));
+ poly(c,[q[0],q[1],[0,-r*.1]],'rgba(255,255,255,.6)');poly(c,[q[0],q[5],[0,-r*.1]],'rgba(255,255,255,.22)');
+ poly(c,[q[5],[0,-r*.1],q[3],q[4]],'rgba(0,0,0,.3)');poly(c,[q[1],q[2],q[3],[0,-r*.1]],'rgba(0,0,0,.12)');
+ poly(c,q,null,'rgba(255,255,255,.9)',1.3);
+ const k=Math.max(0,Math.sin(t*3.2+x*.05))*r*.55;if(k>.5){c.fillStyle='#fff';c.fillRect(w*.25-k/2,-r*.6-.7,k,1.4);c.fillRect(w*.25-.7,-r*.6-k/2,1.4,k)}
+ c.restore()}
+
+function figure(c,o){
+ const role=o.role,fem=role==='H'&&o.fem,C=CHR[fem?'HF':role],t=o.t||0,w=o.walk||0,ph=o.ph||0,f=o.face||1,still=o.still;
+ const sw=Math.sin(ph)*w,bob=still?0:-Math.abs(Math.cos(ph))*4*w-Math.sin(t*2.1)*1.2,hover=(role==='P'&&!still)?-16-Math.sin(t*1.8)*5:0;
+ c.save();c.translate(o.x,o.y);c.scale(o.s,o.s);const ga=o.alpha==null?1:o.alpha;c.globalAlpha=ga;
+ if(!still)ell(c,0,2,22+hover*.25,6,'rgba(0,0,0,.5)');
+ if(role==='D'&&!still){const k=(t*.55)%1;c.globalAlpha=ga*(1-k)*.8;ell(c,0,2,20+k*54,(20+k*54)*.27,null,rg(C.trim,.95),1.8);c.globalAlpha=ga}
+ c.scale(f,1);c.translate(0,bob+hover);c.lineCap='round';c.lineJoin='round';
+ // legs
+ for(const s of[-1,1]){const lx=s*6,fx=lx+s*sw*9,lift=Math.max(0,Math.sin(ph+(s>0?0:Math.PI)))*5*w;ln(c,lx,-34,fx,-4-lift,'#080d19',7);ln(c,fx-1,-3-lift,fx+4,-3-lift,C.trim,3.5)}
+ // back cape / scarf
+ const wv=Math.sin(t*3+ph)*3+w*9;
+ if(role==='K'||(role==='H'&&!fem)){c.beginPath();c.moveTo(-11,-78);c.quadraticCurveTo(-24-wv,-52,-24-wv*1.3,-8);c.lineTo(12,-8);c.lineTo(11,-78);c.closePath();c.fillStyle=lg(c,0,-78,0,-8,[[0,shade(C.base,1.2)],[1,C.base2]]);c.fill();c.strokeStyle=rg(C.trim,.55);c.lineWidth=1.2;c.stroke()}
+ if(fem){c.beginPath();c.moveTo(-6,-76);c.bezierCurveTo(-18-w*8,-70+Math.sin(t*4)*3,-26-w*14,-60+Math.sin(t*3+1)*5,-36-w*18,-62+Math.sin(t*5)*7);c.lineWidth=5.5;c.strokeStyle=C.trim;c.stroke();c.lineWidth=2;c.strokeStyle='rgba(255,255,255,.5)';c.stroke()}
+ // back arm
+ const arm=s=>{const hx=s*15-s*sw*8,hy=-48+(1-Math.abs(sw))*2;ln(c,s*12,-75,hx,hy,shade(C.base,.8),6);ln(c,s*12,-75,hx,hy,rg(C.trim,.35),1);ell(c,hx,hy,3.4,3.4,'#e2bd9a');return[hx,hy]};
+ arm(-1);
+ // robe
+ const fl=role==='P'?23:18;
+ c.beginPath();c.moveTo(-13,-80);c.quadraticCurveTo(-15,-50,-fl-2-w*3,-8);c.lineTo(fl+2+w*2,-8);c.quadraticCurveTo(15,-50,13,-80);c.quadraticCurveTo(0,-86,-13,-80);c.closePath();
+ c.fillStyle=lg(c,0,-84,0,-8,[[0,C.base],[1,C.base2]]);c.fill();c.lineWidth=1.6;c.strokeStyle=rg(C.trim,.9);c.stroke();
+ ln(c,-13,-45,13,-45,rg(C.trim,.9),2.2);ln(c,-fl-1-w*3,-9,fl+1+w*2,-9,rg(C.trim,.8),2);
+ glow(c,0,-61,17,C.gem,.55+Math.sin(t*3)*.15);
+ poly(c,[[0,-67],[5,-61],[0,-54],[-5,-61]],C.gem,'#fff',1);
+ // shoulders / collar
+ if(role==='K'){for(const s of[-1,1])poly(c,[[s*9,-82],[s*22,-79],[s*21,-70],[s*9,-72]],C.trim,'#2a1a05',1.2)}
+ else poly(c,[[-9,-81],[0,-77],[9,-81],[11,-76],[0,-72],[-11,-76]],C.base2,rg(C.trim,.8),1);
+ // front arm + props
+ const[hx,hy]=arm(1);
+ if(role==='H'){ln(c,hx,hy,hx+3,hy+13,'rgba(255,255,255,.6)',1);gem(c,hx+3,hy+19,5.5,C.gem,t,ph)}
+ if(role==='K'){rr(c,hx-2,hy-14,13,19,2,'#e9d3a2','#5a3b10',1.2);for(let i=0;i<3;i++)ln(c,hx+1,hy-10+i*5,hx+8,hy-10+i*5,'#7a5a1a',1)}
+ if(role==='D'){ln(c,hx,hy,hx+8,hy-12,C.trim,2.5);ell(c,hx+10,hy-17,8,8,rg(C.gem,.18),C.trim,2.2);glow(c,hx+10,hy-17,16,C.gem,.35+Math.sin(t*4)*.15)}
+ if(role==='P'){const tw=Math.sin(t*2)*.3;c.save();c.translate(hx+3,hy-22);c.rotate(tw);poly(c,[[0,-11],[10,7],[-10,7]],'rgba(255,255,255,.28)','#fff',1.6);c.restore();
+  [['#ff7ac6',-.2],['#ffd36b',.0],['#6fe8cf',.2],['#8ab4ff',.4]].forEach(([col,a],i)=>ln(c,hx+9,hy-17,hx+9+Math.cos(a+tw)*(18+Math.sin(t*4+i)*3),hy-17+Math.sin(a+tw)*14,rg(col,.85),1.6))}
+ // head
+ c.save();c.translate(0,-92);
+ if(fem){c.beginPath();c.moveTo(-8,-5);c.bezierCurveTo(-18-w*3,-1+Math.sin(t*3)*2,-21-w*7,12,-16-w*9,26+Math.sin(t*4)*3);c.lineWidth=8;c.strokeStyle=C.hair;c.stroke();c.lineWidth=2;c.strokeStyle='rgba(255,255,255,.18)';c.stroke()}
+ ell(c,0,0,12.5,13,role==='P'?C.base2:C.base);
+ ell(c,2.5,1.5,8.2,9.6,'#e8c6a3');
+ c.beginPath();c.ellipse(2.5,-4.5,8.4,5.2,0,Math.PI,TAU);c.fillStyle=(fem||role==='P'||role==='H')?C.hair:C.base2;c.fill();
+ c.beginPath();c.arc(0,0,12.6,Math.PI*1.08,Math.PI*1.95);c.strokeStyle=rg(C.trim,.95);c.lineWidth=1.8;c.stroke();
+ const bl=(t%3.8)<.1?.5:2.6;ell(c,.8,.4,1.5,bl,'#1b1626');ell(c,6.6,.4,1.5,bl,'#1b1626');
+ ln(c,-1.5,-3.4,3,-4,'#3a2a2a',1);ln(c,4.4,-4,8.8,-3.4,'#3a2a2a',1);
+ c.beginPath();c.arc(4,5.4,2.3,.25,Math.PI-.25);c.strokeStyle='#8f4f4f';c.lineWidth=1;c.stroke();
+ if(role==='K'){poly(c,[[-9,-9],[-7,-20],[-2.5,-12.5],[1,-23],[4.5,-12.5],[9,-20],[10,-9]],C.trim,'#2a1a05',1.3);gem(c,1,-14,2.6,'#ff5c8a',t,0,false)}
+ if(role==='D'){ell(c,1,-8,18,4.8,C.base2,rg(C.trim,.9),1.6);rr(c,-8,-23,18,16,6,C.base,rg(C.trim,.9),1.4);ln(c,-8,-12,10,-12,C.trim,2.4)}
+ if(role==='P'){const tw=Math.sin(t*3)*3;poly(c,[[-12,-4],[-3,-26],[3+tw,-37],[13,-4]],lg(c,0,-37,0,-4,[[0,C.trim],[1,C.base]]),'rgba(255,255,255,.7)',1.2);gem(c,3+tw,-39,3,'#fff',t,0,false)}
+ if(role==='H'){gem(c,1,-9.5,2.4,C.gem,t,0,false);if(!fem)poly(c,[[-11,-3],[-7,-11],[0,-7],[5,-13],[9,-6],[13,-4],[13,-8],[2,-14],[-9,-12]],C.hair)}
+ c.restore();
+ // orbiting emblems
+ if(role==='K')for(let i=0;i<2;i++){const a=t*1.7+i*Math.PI,ox=Math.cos(a)*32,oy=-62+Math.sin(a)*11;c.globalAlpha=ga*(.55+.45*Math.sin(a+1.6)*.5+.2);ell(c,ox,oy,5.5,5.5,'rgba(10,8,2,.7)',C.trim,1.8);ln(c,ox-3,oy,ox+3,oy,C.trim,1.6);ln(c,ox,oy-3,ox,oy+3,C.trim,1.6);c.globalAlpha=ga}
+ if(role==='D')for(let i=0;i<7;i++){const a=t*1.2+i*TAU/7;ell(c,Math.cos(a)*34,-46+Math.sin(a)*9,2.2,2.2,i===0?'#ff7aa0':C.gem)}
+ c.restore()}
+
+function drawPortrait(cv,role,fem,t=0){
+ const c=cv.getContext('2d'),w=cv.width;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,w);
+ const col={H:'#8be9ff',K:'#f2b24c',D:'#34d1b6',P:'#a58bff',N:'#dfe6fa',B:'#ff4d6d'}[role]||'#fff';
+ const gr=c.createRadialGradient(w*.5,w*.3,2,w*.5,w*.5,w*.75);gr.addColorStop(0,rg(col,.4));gr.addColorStop(1,'rgba(5,8,18,.95)');c.fillStyle=gr;c.fillRect(0,0,w,w);
+ if(role==='N'){c.save();c.translate(w/2,w/2);const s=w/100;c.scale(s,s);glow(c,0,0,50,col,.5);poly(c,[[-38,-18],[-2,-26],[-2,22],[-38,30]],'#e9deb8','#7a5a1a',2);poly(c,[[38,-18],[2,-26],[2,22],[38,30]],'#f6edd0','#7a5a1a',2);for(let i=0;i<4;i++){ln(c,-32,-8+i*8,-8,-12+i*8,'#8a6a2a',1.4);ln(c,32,-8+i*8,8,-12+i*8,'#8a6a2a',1.4)}c.restore();return}
+ if(role==='B'){c.save();c.translate(w/2,w*.56);const s=w/100;c.scale(s,s);glow(c,0,-4,50,'#ff4d6d',.5);poly(c,[[-30,-14],[-34,-46],[-17,-32],[0,-58],[17,-32],[34,-46],[30,-14]],'#e8b765','#2a0820',2.5);rr(c,-26,-18,52,52,20,'#e9b6a0','#2a0820',2.5);ell(c,-10,2,5,6,'#2a0820');ell(c,10,2,5,6,'#2a0820');ell(c,-10,2,2.6,3,'#ff4d6d');ell(c,10,2,2.6,3,'#ff4d6d');ln(c,-22,-8,-4,-1,'#2a0820',4);ln(c,4,-1,22,-8,'#2a0820',4);ln(c,-8,22,8,22,'#7a1a3c',2.5);c.restore();return}
+ const s=w/58;figure(c,{role,fem,x:w*.5,y:w*.38+92*s,s,t,walk:0,face:1,still:true})}
+
+/* ============ environments ============ */
+const STP=[
+ {a:'#e8b765',b:'#8a6bff',sky:['#080c20','#1b1544'],floor:['#161c38','#060914'],mote:'#f8dca0'},
+ {a:'#f2b24c',b:'#34d1b6',sky:['#08111f','#0f2a38'],floor:['#11202e','#05090f'],mote:'#c8f7ec'},
+ {a:'#34d1b6',b:'#4da3ff',sky:['#030d0d','#0a2a2a'],floor:['#0b2a2c','#02090a'],mote:'#a8fff0'},
+ {a:'#a58bff',b:'#ff7ac6',sky:['#08071f','#251b5e'],floor:['#1a1452','#06051a'],mote:'#e8dcff'},
+ {a:'#ff4d6d',b:'#e8b765',sky:['#14050d','#3a0f26'],floor:['#2b0c1d','#0b0208'],mote:'#ffb37a'}];
+
+function floorBase(c,p,hz=HZ){
+ c.fillStyle=lg(c,0,hz,0,H,[[0,p.floor[0]],[1,p.floor[1]]]);c.fillRect(0,hz,W,H-hz);
+ c.lineWidth=1;c.strokeStyle=rg(p.a,.15);for(let i=-16;i<=16;i++){c.beginPath();c.moveTo(600+i*44,hz);c.lineTo(600+i*215,H);c.stroke()}
+ for(let i=1;i<=10;i++){const y=hz+Math.pow(i/10,1.9)*(H-hz);c.strokeStyle=rg(p.a,.05+i*.013);c.beginPath();c.moveTo(0,y);c.lineTo(W,y);c.stroke()}
+ c.save();c.translate(600,hz);c.scale(1,.3);const g=c.createRadialGradient(0,0,10,0,0,650);g.addColorStop(0,rg(p.a,.34));g.addColorStop(1,rg(p.a,0));c.fillStyle=g;c.fillRect(-650,-650,1300,1300);c.restore()}
+function skyBase(c,p,h=HZ+6){c.fillStyle=lg(c,0,0,0,h,[[0,p.sky[0]],[1,p.sky[1]]]);c.fillRect(0,0,W,h);
+ seed=11;c.fillStyle='#fff';for(let i=0;i<120;i++){c.globalAlpha=srnd()*.6;c.fillRect(srnd()*W,srnd()*(h-40),1.5,1.5)}c.globalAlpha=1}
+function column(c,x,w,top,bot,col){c.fillStyle=lg(c,x-w/2,0,x+w/2,0,[[0,shade(col,.2)],[.35,shade(col,.55)],[1,shade(col,.15)]]);c.fillRect(x-w/2,top,w,bot-top);
+ c.strokeStyle=rg(col,.6);c.lineWidth=1.5;c.strokeRect(x-w/2,top,w,bot-top);rr(c,x-w/2-6,top,w+12,12,3,shade(col,.5),rg(col,.7),1.2);rr(c,x-w/2-6,bot-12,w+12,12,3,shade(col,.4),rg(col,.7),1.2)}
+function archWin(c,x,w,top,bot,stops,edge){c.beginPath();c.moveTo(x-w,bot);c.lineTo(x-w,top+w);c.quadraticCurveTo(x-w,top-4,x,top-w*.35);c.quadraticCurveTo(x+w,top-4,x+w,top+w);c.lineTo(x+w,bot);c.closePath();c.fillStyle=lg(c,0,top,0,bot,stops);c.fill();c.lineWidth=3;c.strokeStyle=edge;c.stroke()}
+
+function wallShade(c){c.fillStyle=lg(c,0,HZ-36,0,HZ+8,[[0,'rgba(3,4,12,0)'],[.7,'rgba(3,4,12,.6)'],[1,'rgba(3,4,12,0)']]);c.fillRect(0,HZ-36,W,44)}
+const SCENE={
+0(c,p){skyBase(c,p);
+ [130,365,600,835,1070].forEach((x,i)=>{const w=i===2?76:58,top=i===2?30:64;
+  archWin(c,x,w,top,HZ+6,[[0,'#17134a'],[.6,'#4b2a72'],[1,'#b9784f']],rg(p.a,.9));
+  c.strokeStyle=rg(p.a,.4);c.lineWidth=1.4;ln(c,x,top-w*.3,x,HZ+6,rg(p.a,.4),1.4);for(let k=1;k<4;k++)ln(c,x-w,top+w+k*40,x+w,top+w+k*40,rg(p.a,.3),1.2);
+  glow(c,x,HZ-40,110,'#ffb070',.18)});
+ [247,483,717,953].forEach(x=>column(c,x,30,20,HZ+8,'#c9a35e'));
+ wallShade(c);
+ floorBase(c,p);
+ for(const r of[330,266,200,136]){ell(c,600,468,r,r*.27,null,rg(p.a,.3+(r<200?.1:0)),1.6)}
+ for(let i=0;i<14;i++){const a=i*TAU/14;ln(c,600+Math.cos(a)*50,468+Math.sin(a)*13.5,600+Math.cos(a)*330,468+Math.sin(a)*89,rg(p.a,.2),1)}
+ c.save();c.translate(600,462);c.scale(1,.3);poly(c,[[-78,22],[-78,-18],[-47,-50],[-20,-12],[0,-60],[20,-12],[47,-50],[78,-18],[78,22]],rg(p.a,.07),rg(p.a,.55),2);c.restore()},
+1(c,p){skyBase(c,p);
+ c.fillStyle=lg(c,0,0,600,0,[[0,'rgba(52,209,182,.3)'],[1,'rgba(52,209,182,0)']]);c.fillRect(0,0,600,HZ+6);
+ c.fillStyle=lg(c,1200,0,600,0,[[0,'rgba(242,178,76,.3)'],[1,'rgba(242,178,76,0)']]);c.fillRect(600,0,600,HZ+6);
+ [[215,'#34d1b6'],[985,'#f2b24c']].forEach(([x,col])=>{
+  column(c,x-135,26,30,HZ+8,col);column(c,x+135,26,30,HZ+8,col);
+  archWin(c,x,118,36,HZ+6,[[0,shade(col,.22)],[1,shade(col,.1)]],rg(col,.9));
+  glow(c,x,200,150,col,.28);
+  ell(c,x,200,92,92,lg(c,x-90,110,x+90,290,[[0,'#2a3350'],[.5,'#10172a'],[1,'#242c47']]),rg(col,.95),5);
+  for(const r of[74,56,38]){ell(c,x,200,r,r,null,rg(col,.45),2)}
+  for(let i=0;i<12;i++){const a=i*TAU/12;ell(c,x+Math.cos(a)*83,200+Math.sin(a)*83,3.6,3.6,col)}
+  for(let i=0;i<8;i++){const a=i*TAU/8;ln(c,x,200,x+Math.cos(a)*36,200+Math.sin(a)*36,rg(col,.7),3.5)}ell(c,x,200,12,12,col,'#fff',2)});
+ wallShade(c);floorBase(c,p);
+ c.fillStyle=lg(c,0,0,600,0,[[0,'rgba(52,209,182,.16)'],[1,'rgba(52,209,182,0)']]);c.fillRect(0,HZ,600,H-HZ);
+ c.fillStyle=lg(c,1200,0,600,0,[[0,'rgba(242,178,76,.16)'],[1,'rgba(242,178,76,0)']]);c.fillRect(600,HZ,600,H-HZ);
+ c.setLineDash([14,12]);ln(c,600,HZ+4,600,H,rg(p.a,.5),2);c.setLineDash([]);
+ ell(c,600,452,150,40,'#10172a',rg(p.a,.9),3);ell(c,600,448,128,32,'#1a2340',rg(p.a,.5),2);ell(c,600,444,92,22,null,rg(p.a,.7),1.5)},
+2(c,p){c.fillStyle=lg(c,0,0,0,HZ+10,[[0,'#010605'],[1,p.sky[1]]]);c.fillRect(0,0,W,HZ+10);
+ seed=5;for(let i=0;i<20;i++){const x=i*62+srnd()*30,h=70+srnd()*130,w=20+srnd()*26;poly(c,[[x-w,0],[x+w,0],[x+srnd()*10-5,h]],lg(c,0,0,0,h,[[0,'#010403'],[1,'#0b2223']]),'rgba(52,209,182,.12)',1)}
+ for(let i=0;i<14;i++){const x=30+i*88+srnd()*30,h=40+srnd()*85,col=['#34d1b6','#4da3ff','#7be9d0'][i%3],w=10+srnd()*10;glow(c,x,HZ-h/2,h,col,.14);poly(c,[[x-w,HZ+6],[x-w*.3,HZ+6-h],[x+w*.5,HZ+6-h*.8],[x+w,HZ+6]],lg(c,0,HZ-h,0,HZ,[[0,col],[1,shade(col,.25)]]),rg('#ffffff',.6),1)}
+ wallShade(c);floorBase(c,p);
+ c.save();c.translate(600,468);c.scale(1,.24);const g=c.createRadialGradient(0,0,10,0,0,560);g.addColorStop(0,'rgba(52,209,182,.4)');g.addColorStop(.7,'rgba(20,100,110,.22)');g.addColorStop(1,'rgba(20,100,110,0)');c.fillStyle=g;c.beginPath();c.arc(0,0,560,0,TAU);c.fill();c.restore();
+ ell(c,600,468,560,134,null,rg(p.a,.55),2.2);ell(c,600,468,500,118,null,rg(p.a,.18),1.2)},
+3(c,p){skyBase(c,p);
+ glow(c,600,150,220,'#a58bff',.3);ell(c,600,150,126,126,lg(c,0,30,0,270,[[0,'#04030f'],[1,'#2a1c70']]),rg(p.a,.95),5);
+ seed=3;c.fillStyle='#fff';for(let i=0;i<60;i++){const a=srnd()*TAU,r=srnd()*118;c.globalAlpha=.3+srnd()*.6;c.fillRect(600+Math.cos(a)*r,150+Math.sin(a)*r,1.6,1.6)}c.globalAlpha=1;
+ for(const r of[150,176]){ell(c,600,150,r,r,null,rg(p.a,.25),1.4)}
+ for(let i=0;i<18;i++){const a=i*TAU/18;ln(c,600+Math.cos(a)*128,150+Math.sin(a)*128,600+Math.cos(a)*420,150+Math.sin(a)*420,rg(p.a,.1),1.2)}
+ [[110,'#a58bff'],[1090,'#a58bff'],[300,'#7a63d6'],[900,'#7a63d6']].forEach(([x,col],i)=>column(c,x,i<2?34:26,i<2?40:100,HZ+8,col));
+ wallShade(c);floorBase(c,p);
+ ell(c,600,470,500,128,'rgba(20,14,70,.5)',rg(p.a,.7),2.4);for(const r of[430,350,270,190]){ell(c,600,470,r,r*.256,null,rg(p.a,.22),1.3)}
+ for(let i=0;i<48;i++){const a=i*TAU/48,i2=i%4===0?.88:.94;ln(c,600+Math.cos(a)*500,470+Math.sin(a)*128,600+Math.cos(a)*500*i2,470+Math.sin(a)*128*i2,rg(p.a,.5),1.3)}},
+4(c,p){skyBase(c,p);
+ glow(c,978,190,320,'#ff4d6d',.34);ell(c,978,190,150,150,lg(c,0,40,0,340,[[0,'#7a1030'],[1,'#2a0820']]),rg('#ff4d6d',.8),4);ell(c,978,190,118,118,null,rg('#ffb37a',.25),2);
+ [[60,26],[210,26],[1140,26]].forEach(([x,w])=>column(c,x,w,20,HZ+8,'#c9a35e'));
+ for(const [x0,dir] of[[0,1],[1200,-1]]){c.beginPath();c.moveTo(x0,0);c.lineTo(x0+dir*330,0);c.lineTo(x0+dir*210,HZ+6);c.lineTo(x0,HZ+6);c.closePath();c.fillStyle=lg(c,x0,0,x0+dir*330,0,[[0,'#3b0c20'],[.5,'#8d1f45'],[1,'#3b0c20']]);c.fill();for(let i=1;i<7;i++)ln(c,x0+dir*i*44,0,x0+dir*i*30,HZ+6,'rgba(0,0,0,.4)',2)}
+ wallShade(c);floorBase(c,p);
+ poly(c,[[260,H],[560,H],[1010,484],[930,484]],lg(c,0,484,0,H,[[0,'#5a1230'],[1,'#a02050']]),rg('#e8b765',.9),3);
+ poly(c,[[300,H],[330,H],[945,484],[935,484]],null,rg('#e8b765',.5),1.5);
+ ell(c,978,486,205,44,'#2a0c1c',rg('#e8b765',.8),3);ell(c,978,478,170,34,'#3b1028',rg('#e8b765',.5),2);
+ rr(c,894,242,168,236,[70,70,10,10],lg(c,0,242,0,478,[[0,'#4a1030'],[1,'#1b0510']]),rg('#e8b765',.9),4);rr(c,914,270,128,190,[54,54,6,6],'rgba(0,0,0,.35)',rg('#e8b765',.4),2)}
+};
+const BG=[];
+function paintStage(s){const cv=document.createElement('canvas');cv.width=Math.round(W*S);cv.height=Math.round(H*S);const c=cv.getContext('2d');c.scale(S,S);SCENE[s](c,STP[s]);return cv}
+
+/* ============ boss + props ============ */
+function bossFig(c,x,y,t,hp,hit,telegraph){
+ const O='#2a0820',j=hit>0?Math.sin(t*90)*5*hit:0;c.save();c.translate(x+j,y);
+ glow(c,0,-90,200+Math.sin(t*3)*14,hit>0?'#ffffff':'#ff2d5e',hit>0?.5:.32);ell(c,0,36,98,16,'rgba(0,0,0,.55)');
+ const wv=Math.sin(t*2.2)*10;
+ c.beginPath();c.moveTo(-52,-92);c.lineTo(52,-92);c.quadraticCurveTo(102+wv,-20,116+wv*1.4,36);c.lineTo(wv,46);c.lineTo(-116+wv*1.4,36);c.quadraticCurveTo(-102+wv,-20,-52,-92);c.closePath();
+ c.fillStyle=lg(c,0,-100,0,46,[[0,'#c0244f'],[1,'#240716']]);c.fill();c.lineWidth=3;c.strokeStyle='#e8b765';c.stroke();
+ for(let i=-3;i<=3;i++)ln(c,i*14,-60,i*26+wv*.4,38,'rgba(0,0,0,.28)',2);
+ rr(c,-40,-98,80,122,22,'#3a0f3e','#e8b765',2.5);rr(c,-28,-62,56,64,14,'#7a1a4a','#e8b765',2);
+ const pu=1+Math.sin(t*4)*.14;gem(c,0,-32,15*pu,'#ff5c8a',t,0);ln(c,-5,-46,4,-30,O,2.4);ln(c,4,-30,-4,-16,O,2.4);
+ // shoulder shards
+ for(const s of[-1,1])poly(c,[[s*44,-92],[s*84,-110],[s*72,-70],[s*52,-62]],'#c8366a','#e8b765',2);
+ rr(c,-32,-148,64,58,24,'#e9b6a0',O,2.5);
+ for(const ex of[-13,13]){ell(c,ex,-120,7,8,O);glow(c,ex,-120,18,'#ff4d6d',.7);ell(c,ex,-120,4,5,telegraph?'#ffffff':'#ff4d6d')}
+ ln(c,-29,-138,-6,-129,O,5);ln(c,6,-129,29,-138,O,5);ln(c,-12,-100,12,-100,'#7a1a4a',3);
+ poly(c,[[-36,-148],[-40,-178],[-19,-163],[0,-192],[19,-163],[40,-178],[36,-148]],'#e8b765',O,3);ln(c,2,-192,12,-152,O,2.4);
+ for(let i=0;i<5;i++){const a=t*1.1+i*TAU/5;gem(c,Math.cos(a)*78,-168+Math.sin(a)*15,8+(i%2)*3,i%2?'#ffd47a':'#ff7a9a',t,i)}
+ const rc=['#34d1b6','#f2b24c','#a58bff'];c.lineWidth=4.5;for(let i=0;i<hp;i++){const d=i%2?1:-1;c.strokeStyle=rc[i%3];c.shadowColor=rc[i%3];c.shadowBlur=14;c.beginPath();c.ellipse(0,-72,84+i*15,104+i*13,0,t*d,t*d+4.4);c.stroke()}c.shadowBlur=0;
+ c.restore()}
+
+function drawSentinel(c,h,t){
+ const col=h.type==='wisp'?'#ff6b8a':'#ff5d5d',r=h.r;
+ c.save();c.translate(h.x,h.y);
+ ell(c,0,r+9,r*1.1,r*.34,'rgba(0,0,0,.45)');
+ const bob=Math.sin(t*3+h.ph)*3;c.translate(0,-r*.9+bob);
+ if(h.type==='wisp'){glow(c,0,0,r*3.2,col,.55);ell(c,0,0,r,r,lg(c,-r,-r,r,r,[[0,'#fff'],[.4,col],[1,'#6a1030']]));for(let i=0;i<5;i++){const a=t*4+i*1.3;ell(c,Math.cos(a)*r*1.2,Math.sin(a)*r*.7,2.4,2.4,rg(col,.8))}}
+ else{
+  glow(c,0,0,r*3.4,col,.4+Math.sin(t*5+h.ph)*.1);
+  ell(c,0,0,r,r,lg(c,-r,-r,r,r,[[0,'#4a4f66'],[.5,'#14172a'],[1,'#07080f']]),'rgba(255,255,255,.35)',1.6);
+  c.save();c.rotate(t*1.6+h.ph);c.scale(1,.32);ell(c,0,0,r*1.55,r*1.55,null,rg('#e8b765',.95),2.6);c.restore();
+  c.save();c.rotate(-t*1.2);c.scale(1,.32);c.setLineDash([6,8]);ell(c,0,0,r*1.2,r*1.2,null,rg(col,.7),1.6);c.setLineDash([]);c.restore();
+  ell(c,0,0,r*.42,r*.42,col);glow(c,0,0,r*.9,'#ffffff',.55+Math.sin(t*6+h.ph)*.25);
+  // scanning cone toward heading
+  const a=h.hd||0;c.globalCompositeOperation='lighter';c.beginPath();c.moveTo(0,r*.2);c.arc(0,r*.2,r*4.2,a-.3,a+.3);c.closePath();c.fillStyle=rg(col,.12);c.fill();c.globalCompositeOperation='source-over'}
+ c.restore()}
+
+function drawPortal(c,x,y,open,col,t,near){
+ c.save();c.globalAlpha=open?1:.38;
+ glow(c,x,y,130+Math.sin(t*3)*10,col,open?.5:.2);
+ ell(c,x,y+66,36,9,'rgba(0,0,0,.45)');
+ ell(c,x,y,34,76,rg(col,open?.12:.05),rg('#e8b765',.9),5);
+ for(let i=0;i<3;i++){const d=i%2?1:-1;c.strokeStyle=i?rg(col,.95):'#fff';c.lineWidth=5-i*1.4;c.beginPath();c.ellipse(x,y,29-i*7+Math.sin(t*2+i)*2,68-i*12,0,t*d,t*d+4.2+i);c.stroke()}
+ if(open)for(let i=0;i<5;i++){const a=t*.9+i*TAU/5;gem(c,x+Math.sin(a)*24,y+Math.cos(a)*54,4.5,col,t,i,false)}
+ else{rr(c,x-9,y-6,18,14,3,'#1a1f30','#e8b765',2);c.beginPath();c.arc(x,y-6,6,Math.PI,0);c.strokeStyle='#e8b765';c.lineWidth=2.2;c.stroke()}
+ c.restore()}
+function keycap(c,x,y,t,ch='E'){const yy=y+Math.sin(t*5)*3;rr(c,x-13,yy-13,26,26,7,'rgba(6,9,18,.92)','#f8dca0',1.8);txt(c,ch,x,yy+1,14,'#f8dca0',900);poly(c,[[x-4,yy+13],[x+4,yy+13],[x,yy+18]],'#f8dca0')}
+
+/* ============ content ============ */
+const PN={
+ K:{ar:'K-Means · القائد',en:'K-Means · The Commander',c:'#f2b24c',short:'K-MEANS'},
+ D:{ar:'DBSCAN · المحقق',en:'DBSCAN · The Tracker',c:'#34d1b6',short:'DBSCAN'},
+ P:{ar:'PCA · الحارسة',en:'PCA · The Prism',c:'#a58bff',short:'PCA'},
+ N:{ar:'الراوي',en:'Narrator',c:'#dfe6fa'},
+ B:{ar:'الملك المتصدّع',en:'The Fractured King',c:'#ff6b88'},
+ H:{ar:'حارس التاج',en:'The Keeper',c:'#8be9ff'}};
+const playerLabel=()=>L(G('حارس التاج','حارسة التاج'),'The Keeper');
+const FEATS=[
+ {id:'CARAT',col:'#ffd47a',x:170,y:300,ar:'الوزن',en:'Weight',full:b('الوزن (carat)','Weight (carat)')},
+ {id:'DEPTH',col:'#7dffe6',x:300,y:582,ar:'نسبة العمق',en:'Depth',full:b('نسبة العمق (depth)','Depth ratio (depth)')},
+ {id:'TABLE',col:'#c4a8ff',x:560,y:292,ar:'السطح',en:'Table',full:b('السطح (table)','Table (table)')},
+ {id:'X',col:'#ff9ac0',x:705,y:585,ar:'الطول',en:'Length',full:b('الطول (x)','Length (x)')},
+ {id:'Y',col:'#8ab4ff',x:885,y:304,ar:'العرض',en:'Width',full:b('العرض (y)','Width (y)')},
+ {id:'Z',col:'#8ff0a8',x:1045,y:585,ar:'الارتفاع',en:'Height',full:b('الارتفاع (z)','Height (z)')}];
+const BEACONS=[{x:175,y:345},{x:565,y:570},{x:990,y:360}];
+const PEDS=[{n:6,x:190,y:525},{n:5,x:385,y:462},{n:4,x:600,y:432},{n:3,x:815,y:462},{n:2,x:1005,y:525}];
+const GATE=[{x:1135,y:445},{x:1135,y:505},{x:1130,y:505},{x:1135,y:505},null];
+const BPROMPT={K:b('وزّع الألماسات حسب أقرب مركز!','Assign every diamond to its nearest centre!'),D:b('اكشف الألماسة المعزولة!','Detect the isolated outlier!'),P:b('اختصر الأبعاد الستة!','Reduce the six dimensions!')};
+const BWHY={K:b('هذا التهديد يطلب توزيع الأحجار على أقرب مركز؛ استعمل K-Means بالزر 1.','This threat calls for assigning stones to their nearest centre — use K-Means with key 1.'),
+ D:b('هذا التهديد يطلب اكتشاف النقاط المنعزلة والمناطق الكثيفة؛ استعمل DBSCAN بالزر 2.','This threat calls for finding isolated points and dense regions — use DBSCAN with key 2.'),
+ P:b('هذا التهديد يطلب تقليل عدد الأبعاد؛ استعمل PCA بالزر 3.','This threat calls for reducing the number of dimensions — use PCA with key 3.')};
+
+const STG=[
+ {pill:b('الفصل الأول · البلّورات الست','Chapter I · The Six Crystals'),loc:b('الخزنة الملكية','The Royal Vault'),
+  title:b('البلّورات الست المفقودة','The Six Lost Crystals'),
+  desc:b('استعد ست بلّورات تمثّل خصائص الألماس الفيزيائية، وتجنّب الحرّاس الآليين.','Recover six crystals — one for each physical feature of a diamond — and avoid the patrol sentinels.'),
+  why:b('تحطّم تاج المملكة. البلّورات الست هي القياسات التي نحتاجها لفهم الألماس.','The kingdom’s crown has shattered. Its six crystals are the measurements we need to understand diamonds.'),
+  how:b('المس كل بلّورة لالتقاطها، واندفع (Space) لتتجاوز الحرّاس. بعد جمعها تحدّث مع K-Means بمفتاح E.','Touch each crystal to collect it and dash (Space) past the sentinels. With all six, speak to K-Means using E.'),
+  next:()=>g.collected.size<6?b(`بلّورات الخصائص المتبقية: ${6-g.collected.size}.`,`Crystals remaining: ${6-g.collected.size}.`):g.ready?b('البوابة الذهبية مفتوحة: E للدخول إلى المحكمة.','The golden gate is open: press E to enter the court.'):b('تحدّث مع K-Means عند الحافة اليمنى (E).','Speak to K-Means on the right (E).')},
+ {pill:b('الفصل الثاني · محكمة المراكز','Chapter II · The Centroid Court'),loc:b('محكمة K-Means','K-Means’s Court'),
+  title:b('محاكمة المجموعتين','The Trial of Two Groups'),
+  desc:b('وازن بين حاجة K-Means للنظام وقدرته على توزيع الألماس.','Weigh K-Means’s need for order against how it actually groups diamonds.'),
+  why:b('يريد K-Means فرض النظام: كل ألماسة تنتمي إلى أحد أقرب مركزين.','K-Means wants order: every diamond belongs to one of two nearest centres.'),
+  how:b('التقط ألماسة المنصّة؛ تظهر قياساتها. احملها إلى الخزنة الصغيرة يسارًا أو الكبيرة يمينًا واضغط E. الحارس الآلي يجتاز الساحة، فاختر لحظتك.','Pick up the dais diamond to see its measurements. Carry it to the small vault (left) or the large vault (right) and press E. A sentinel sweeps the hall — pick your moment.'),
+  next:()=>g.questComplete?b('اكتملت المحكمة؛ ادخل البوابة.','The court is complete; step through the gate.'):g.holding?b('انقل الحجر إلى الخزنة المناسبة؛ التجميع يعتمد على ستة قياسات.','Carry the stone to the right vault — clustering uses six measurements.'):b(`افرز 4 ألماسات حقيقية (${g.kRound}/4). ابدأ من المنصّة المضيئة.`,`Sort 4 real diamonds (${g.kRound}/4). Start at the glowing dais.`)},
+ {pill:b('الفصل الثالث · كهف الكثافة','Chapter III · The Density Cavern'),loc:b('كهف DBSCAN','DBSCAN Cavern'),
+  title:b('الألماسات المنسيّة','The Forgotten Diamonds'),
+  desc:b('اكشف ما يحدث للنقاط الموجودة خارج المناطق الكثيفة.','Discover what happens to the points that lie outside dense regions.'),
+  why:b('DBSCAN يرفض إجبار كل حجر على الانضمام لمجموعة: بعض الملاحظات تقع خارج المناطق الكثيفة.','DBSCAN refuses to force every stone into a group: some observations lie outside any dense region.'),
+  how:b('حلقة eps حولك تُظهر عدد الجيران (للتوضيح). اذهب إلى الماسحات المضيئة بالترتيب واضغط E، وتجنّب الأرواح الحمراء — إنها النقاط الشاذة!','The eps ring around you counts neighbours (illustrative). Reach each glowing scanner in order and press E — and avoid the red wisps: they are the outliers!'),
+  next:()=>g.questComplete?b('اكتمل انضمام المحقق؛ البوابة جاهزة.','The Tracker has joined; the gate is ready.'):b(`افحص الماسح ${g.dbRound+1} من 3.`,`Inspect scanner ${g.dbRound+1} of 3.`)},
+ {pill:b('الفصل الرابع · مرصد المنشور','Chapter IV · The Prism Observatory'),loc:b('مرصد PCA','PCA Prism Observatory'),
+  title:b('بوابة الأبعاد','The Dimension Gate'),
+  desc:b('اجمع المعرفة في عدد أقل من المكوّنات دون فقد معظم التباين.','Condense the knowledge into fewer components without losing most of the variance.'),
+  why:b('تكشف PCA أن بعض القياسات مترابطة، ويمكن تمثيل البيانات بمكوّنات أقل.','PCA reveals that some measurements are correlated, so the data can be represented with fewer components.'),
+  how:b('كل منصّة تُظهر نسبة التباين التراكمي. اضغط E على المنصّة التي تحقق 85% على الأقل بأقل عدد من المكوّنات.','Each pedestal shows its cumulative variance. Press E on the pedestal that reaches at least 85% with the fewest components.'),
+  next:()=>g.questComplete?b('يعمل المنشور؛ البوابة التالية تقود إلى الملك.','The prism works; the next gate leads to the king.'):b('الهدف: منصّة تحقق 85% بأقل عدد من المكوّنات.','Goal: the pedestal that reaches 85% with the fewest components.')},
+ {pill:b('الفصل الأخير · العرش المتصدّع','Final Chapter · The Fractured Throne'),loc:b('العرش المتصدّع','The Fractured Throne'),
+  title:b('مواجهة الملك المتصدّع','Face the Fractured King'),
+  desc:b('اجمع قوى الحراس الثلاثة لاستعادة التاج وكشف السر.','Unite the three Guardians’ powers to restore the crown and reveal the secret.'),
+  why:b('يريد الملك فرض تفسير واحد على الجميع. أثبت أن لكل طريقة سؤالًا تجيب عنه.','The king insists on a single explanation for everything. Prove that each method answers its own question.'),
+  how:b('تحرّك لتفادي الشظايا، ثم اختر الخوارزمية المناسبة للسؤال: 1 للتجميع (K-Means)، 2 للكثافة (DBSCAN)، 3 لاختصار الأبعاد (PCA).','Move to dodge the shards, then pick the right algorithm for the king’s demand: 1 grouping (K-Means), 2 density (DBSCAN), 3 dimension reduction (PCA).'),
+  next:()=>g.bossHP>0?b(`اكسر الدرع التالي (${3-g.bossHP}/3) بالقدرة المناسبة. احذر الشظايا.`,`Break the next shield (${3-g.bossHP}/3) with the right ability. Mind the shards.`):b('اكتملت المواجهة. استمع إلى حقيقة الملك.','The duel is over. Hear the king’s truth.')}
+];
+
+/* ============ state ============ */
+let g,keys={},last=performance.now(),clock=0,particles=[],flash=0,shake=0,fade=0,hitT=0,toastTimer,chapTimer;
+let rings=[],pops=[],ghosts=[],fol=[],projectiles=[],MOTES=Array.from({length:80},()=>({x:rand(0,W),y:rand(0,H),s:rand(.8,2.8),v:rand(6,26),p:rand(0,6.3)}));
+const DP=DATA.points.slice(0,420).map(q=>({x:clamp(610+q[0]*46,60,1145),y:clamp(420-q[1]*24,300,612),noise:q[4]===-1}));
+const ALLY={K:false,D:false,P:false};
+
+function reset(){
+ g={stage:0,started:false,score:0,hp:5,player:{x:110,y:590,vx:0,vy:0,inv:0,cd:0,dashT:0,dx:1,dy:0,face:1,walk:0,ph:0},collected:new Set(),ready:false,questComplete:false,holding:null,
+  kRound:0,kSuccess:0,dbRound:0,dbSuccess:0,pcaPicked:null,allies:{K:false,D:false,P:false},bossHP:3,bossStep:0,bossOrder:['K','D','P'],bossCooldown:0,shotTimer:1.4,pat:0,
+  dialog:null,quiz:false,completed:false,evidenceOpen:false,combo:0,comboT:0,haz:makeHaz(0),insight:b('كل خطوة تكشف جزءًا من الحقيقة…','Every step reveals a piece of the truth…'),neigh:0};
+ particles=[];keys={};projectiles=[];rings=[];pops=[];ghosts=[];fol=[];stopAmbience();
+ $('evidenceOverlay').classList.add('hidden');$('quiz').classList.add('hidden');$('dialogue').classList.add('hidden');$('endOverlay').classList.add('hidden');$('startOverlay').classList.remove('hidden');
+ setStartText();updateUI()}
+function makeHaz(n){
+ if(n===0)return[{type:'patrol',pts:[[170,430],[520,430],[520,520],[170,520]],i:1,sp:92,r:19,x:170,y:430,ph:0,hd:0},{type:'patrol',pts:[[650,420],[960,420],[960,520],[650,520]],i:1,sp:104,r:19,x:650,y:420,ph:2,hd:0}];
+ if(n===1)return[{type:'sweep',pts:[[250,548],[950,548]],i:1,sp:140,r:19,x:250,y:548,ph:1,hd:0}];
+ if(n===2)return[0,1,2].map(i=>{const a=rand(0,TAU);return{type:'wisp',x:330+i*270,y:380+i*60,vx:Math.cos(a)*100,vy:Math.sin(a)*80,r:12,ph:i}});
+ return[]}
+function setStartText(){const sb=$('startBtn');sb.disabled=!gender;sb.textContent=gender?L(G('▶ ابدأ المغامرة','▶ ابدئي المغامرة'),'▶ Begin the adventure'):L('▶ اختر شخصيتك للبدء','▶ Choose your Keeper to begin');
+ $('introRole').textContent=gender?L(G('أنت حارس التاج الأخير. اجمع الأدلة واجتز اختبارات الحراس لتكشف سرّ الملك.','أنتِ حارسة التاج الأخيرة. اجمعي الأدلة واجتازي اختبارات الحراس لتكشفي سرّ الملك.'),'You are the last Keeper of the Crown. Gather the evidence, pass the Guardians’ trials and uncover the king’s secret.'):L('اجمع الأدلة، واجتز اختبارات الحراس، واكشف سرّ الملك.','Gather the evidence, pass the Guardians’ trials and uncover the king’s secret.')}
+function chooseGender(x){gender=x;$('chooseHe').setAttribute('aria-pressed',x==='male');$('chooseShe').setAttribute('aria-pressed',x==='female');setStartText()}
+
+/* ============ UI ============ */
+function setInsight(ar,en){g.insight=b(ar,en);$('lastInsight').textContent=T(g.insight)}
+function toast(s,bad=false){const el=$('toast');el.textContent=s;el.classList.toggle('bad',bad);el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),bad?5600:3200);$('ariaStatus').textContent=s}
+function hintText(){
+ const n=g.collected.size;
+ if(g.stage===0)return n<6?b('المس كل بلّورة لالتقاطها · تجنّب الحرّاس الآليين','Touch each crystal to collect it · avoid the sentinels'):g.ready?b('البوابة الذهبية مفتوحة · اضغط E للدخول','The golden gate is open · press E to enter'):b('تحدّث مع K-Means (E) لفتح البوابة','Speak to K-Means (E) to open the gate');
+ if(g.stage===1)return g.holding?b(`ألماسة ${g.holding.carat.toFixed(2)} قيراط · احملها إلى الخزنة الصغيرة يسارًا أو الكبيرة يمينًا (E)`,`${g.holding.carat.toFixed(2)} ct diamond · carry it to the small vault (left) or the large vault (right), then press E`):g.questComplete?b('اكتملت المحكمة · ادخل البوابة','The court is complete · enter the gate'):b('التقط الألماسة من المنصّة المركزية','Pick up the diamond from the central dais');
+ if(g.stage===2)return g.questComplete?b('اكتمل تحدي DBSCAN · ادخل البوابة','DBSCAN’s trial is complete · enter the gate'):b('اذهب إلى الماسح المضيء واضغط E · الحلقة توضيحية','Reach the glowing scanner and press E · the ring is illustrative');
+ if(g.stage===3)return g.questComplete?b('فتح المنشور الباب · ادخل البوابة','The prism has opened the door · enter the gate'):b('اختر أقل عدد من المكوّنات يحتفظ بـ 85% على الأقل (E)','Choose the fewest components keeping at least 85% variance (E)');
+ const k=g.bossOrder[g.bossStep];return k?b(`${BPROMPT[k].ar} · القدرات 1 أو 2 أو 3 · تفادَ الشظايا`,`${BPROMPT[k].en} · abilities 1, 2 or 3 · dodge the shards`):b('الضربة الأخيرة!','The final blow!')}
+function updateUI(){
+ const s=STG[g.stage];
+ $('chapterPill').textContent=T(s.pill);$('locationPill').textContent=T(s.loc);
+ $('qTitleSide').textContent=T(s.title);$('qDescSide').textContent=T(s.desc);$('qWhy').textContent=T(s.why);$('qHow').textContent=T(s.how);$('qNext').textContent=T(s.next());
+ $('lastInsight').textContent=T(g.insight);
+ $('hearts').innerHTML='♥ '.repeat(Math.max(0,g.hp))+'<i>♥ </i>'.repeat(Math.max(0,5-g.hp));
+ $('score').textContent=String(g.score).padStart(6,'0');
+ let pr='';
+ if(g.stage===0)pr=L(`${g.collected.size} / 6 بلّورات`,`${g.collected.size} / 6 crystals`);
+ if(g.stage===1)pr=L(`${g.kRound} / 4 ألماسات`,`${g.kRound} / 4 diamonds`);
+ if(g.stage===2)pr=L(`${g.dbRound} / 3 تحديات`,`${g.dbRound} / 3 trials`);
+ if(g.stage===3)pr=L('المطلوب: 85% من التباين','Goal: 85% of variance');
+ if(g.stage===4)pr=L(`${3-g.bossHP} / 3 دروع`,`${3-g.bossHP} / 3 shields`);
+ $('taskCounter').textContent=pr;
+ [...$('steps').children].forEach((v,i)=>v.className=i<g.stage?'done':i===g.stage?'now':'');
+ $('evidenceBtn').disabled=g.collected.size<6;
+ for(const k of['K','D','P'])$('ally'+k).classList.toggle('joined',g.allies[k]);
+ $('abilities').classList.toggle('visible',g.stage===4&&!g.completed);
+ const h=hintText();$('hintPill').innerHTML=`<strong>${L('مهمتك الآن','Objective')}</strong> · ${T(h)}`}
+function announce(n){const el=$('reveal');$('revNo').textContent='✦  '+L(['الفصل الأول','الفصل الثاني','الفصل الثالث','الفصل الرابع','الفصل الأخير'][n],['CHAPTER I','CHAPTER II','CHAPTER III','CHAPTER IV','FINAL CHAPTER'][n])+'  ✦';$('revTitle').textContent=T(STG[n].title);
+ el.classList.remove('on');void el.offsetWidth;el.classList.add('on');clearTimeout(chapTimer);chapTimer=setTimeout(()=>el.classList.remove('on'),2500)}
+function refreshAudioUI(){$('musicBtn').textContent=musicOn?L('♪ الموسيقى: تشغيل','♪ Music: on'):L('♪ الموسيقى: إيقاف','♪ Music: off')}
+
+/* dialogue */
+function dialogue(lines,done=null){g.dialog={lines,i:0,done};$('dialogue').classList.remove('hidden');showDialog()}
+function showDialog(instant=false){
+ const d=g.dialog;if(!d)return;const a=d.lines[d.i],w=a.who,pn=PN[w]||PN.N;
+ d.full=T({ar:a.ar,en:a.en});d.n=instant?d.full.length:0;d.typing=!instant;
+ $('dialogue').style.setProperty('--accent',pn.c);
+ $('dSpeaker').textContent=w==='H'?playerLabel():T(pn);$('dLine').textContent=instant?d.full:'';
+ drawPortrait($('portrait'),w,gender==='female');
+ $('dNext').textContent=d.i===d.lines.length-1?L('هيا ✓','Let’s go ✓'):L('التالي ↵','Next ↵')}
+function nextDialogue(skip=false){const d=g.dialog;if(!d)return;
+ if(!skip&&d.typing){d.typing=false;d.n=d.full.length;$('dLine').textContent=d.full;return}
+ if(skip)d.i=d.lines.length-1;else d.i++;
+ if(d.i>=d.lines.length){g.dialog=null;$('dialogue').classList.add('hidden');d.done&&d.done();updateUI()}else showDialog()}
+
+/* fx helpers */
+function burst(x,y,c,n=16){for(let i=0;i<n;i++){const a=rand(0,TAU),v=rand(40,190);particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:rand(.45,1.1),ttl:1.1,c,size:rand(1.6,4.2)})}rings.push({x,y,c,t:0})}
+function givePoints(n,x,y,extra=''){g.score+=n;updateUI();const s=$('score');s.classList.remove('pop');void s.offsetWidth;s.classList.add('pop');pops.push({x:x??g.player.x,y:(y??g.player.y)-110,t:0,s:'+'+n+extra})}
+function loseHeart(){if(g.hp<=0)return;g.hp--;snd('hurt');flash=.4;shake=.4;burst(g.player.x,g.player.y-40,'#ff5d7a',16);updateUI();
+ if(g.hp<=0)dialogue([{who:'P',ar:()=>`حتى حراس التاج يستحقون فرصة ثانية. استعدت طاقتك، ${G('حاول','حاولي')} من جديد!`,en:'Even the Keepers deserve a second chance. Your strength is restored — try again!'}],()=>{g.hp=5;projectiles=[];const p=g.player;p.x=140;p.y=560;p.vx=p.vy=0;p.inv=1.6;updateUI()})}
+
+/* evidence */
+const EDA={carat:{labels:['0.2–0.5','0.5–1','1–1.5','1.5–2','2+'],counts:[17670,17196,12806,4077,2144]},depth:{labels:['<60','60–62','62–64','64+'],counts:[5101,24140,22571,2081]}};
+function renderEDAChart(id,data){const root=$(id);root.innerHTML='';const mx=Math.max(...data.counts);data.counts.forEach((v,i)=>{const s=document.createElement('div');s.className='bar-slot';const bar=document.createElement('div');bar.className='bar';bar.style.height=(v/mx*72)+'px';bar.title=`${data.labels[i]}: ${v.toLocaleString('en-US')} ${L('ألماسة','diamonds')}`;const lab=document.createElement('span');lab.className='bar-label';lab.textContent=data.labels[i];s.append(bar,lab);root.appendChild(s)})}
+function renderEDA(){renderEDAChart('caratChart',EDA.carat);renderEDAChart('depthChart',EDA.depth)}
+function showEvidence(){if(g.collected.size<6)return;g.evidenceOpen=true;keys={};renderEDA();$('evidenceOverlay').classList.remove('hidden')}
+function closeEvidence(){g.evidenceOpen=false;$('evidenceOverlay').classList.add('hidden');setInsight('الأدلة: 53,893 سجلًا نظيفًا. ستة قياسات في التجميع، والسعر ليس بينها.','The evidence: 53,893 clean records. Six measurements feed the clustering — and price is not one of them.');updateUI();toast(L('✓ اكتمل سجل الأدلة. تحدّث مع K-Means لفتح المحكمة.','✓ Evidence reviewed. Speak to K-Means to open the court.'))}
+function renderEnd(){$('endScore').textContent=g.score.toLocaleString('en-US');$('endingHero').textContent=L(`${playerLabel()} ${G('كشف','كشفت')} سرّ المملكة: لم تكن البلّورات مفقودة، بل كانت المعرفة مجزّأة بين الحراس.`,'The Keeper uncovered the kingdom’s secret: the crystals were never lost — the knowledge was simply divided among the Guardians.')}
+
+/* ============ stage flow ============ */
+function enterStage(n){
+ const p=g.player;g.stage=n;announce(n);const sp=[[110,590],[130,590],[110,590],[110,590],[140,580]][n];p.x=sp[0];p.y=sp[1];p.vx=p.vy=0;p.inv=1.5;
+ g.questComplete=false;g.ready=false;g.holding=null;projectiles=[];particles=[];ghosts=[];fol=[];g.haz=makeHaz(n);fade=1;snd('portal');
+ if(n===1){g.kRound=0;g.kSuccess=0;const sh=a=>a.sort(()=>Math.random()-.5);g.kCases=sh([...sh(DATA.cases.filter(d=>d.class===0)).slice(0,2),...sh(DATA.cases.filter(d=>d.class===1)).slice(0,2)])}
+ if(n===2){g.dbRound=0;g.dbSuccess=0}
+ if(n===3)g.pcaPicked=null;
+ if(n===4){g.bossHP=3;g.bossStep=0;g.shotTimer=2;g.bossCooldown=0;g.pat=0;g.bossOrder=['K','D','P'].sort(()=>Math.random()-.5)}
+ updateUI();burst(p.x,p.y-30,'#c9b5ff',34);
+ const hh=(m,f)=>G(m,f);
+ if(n===1)dialogue([
+  {who:'N',ar:'المحكمة الأولى: لإعادة بناء التاج، علينا معرفة كيف تنتظم الألماسات المتشابهة.',en:'The first trial: to rebuild the crown, we must learn how similar diamonds organise themselves.'},
+  {who:'K',ar:'أنا أؤمن بالنظام! اخترت مركزين، وأخصّص لكل ألماسة أقرب مجموعة وفق القياسات الست بعد التقييس (Scaling).',en:'I believe in order! I chose two centres and assign every diamond to the nearest group, using all six measurements after scaling.'},
+  {who:'D',ar:'لكن هل يستطيع نظامك تمييز الأحجار التي لا تشبه أي تجمّع كثيف؟',en:'But can your system recognise the stones that resemble no dense group at all?'},
+  {who:'K',ar:()=>`${hh('اختبر','اختبري')} حكمي: ${hh('احمل','احملي')} أربعة أحجار من المنصّة الوسطى، و${hh('ضعها','ضعيها')} في الخزنة المناسبة. وانتبه للحارس الآلي!`.replace('وانتبه',hh('وانتبه','وانتبهي')),en:'Test my judgement: carry four stones from the central dais to the right vault. And watch the sentinel!'}]);
+ if(n===2)dialogue([
+  {who:'N',ar:'في الكهف السحيق نقاط لم يهتمّ بها أحد؛ هنا تبدأ حكاية الألماسات المنسيّة.',en:'Deep in the cavern wait observations that no one ever noticed. Here begins the tale of the forgotten diamonds.'},
+  {who:'D',ar:'لا أجبر كل نقطة على الانضمام. أبحث عمّن يملك جيرانًا كفاية داخل نصف القطر eps.',en:'I never force a point to join. I look for those with enough neighbours inside the radius eps.'},
+  {who:'K',ar:'ربما لم تكن خريطتي كاملة كما ظننت…',en:'Perhaps my map was not as complete as I thought…'},
+  {who:'D',ar:()=>`${hh('افحص','افحصي')} ثلاث حالات لتفهم كيف نكتشف الكثافة والضوضاء. وتجنّب الأرواح الحمراء، فهي النقاط الشاذة.`.replace('وتجنّب',hh('وتجنّب','وتجنّبي')),en:'Complete three cases to learn how density and noise are detected. And avoid the red wisps — they are the outliers.'}]);
+ if(n===3)dialogue([
+  {who:'N',ar:'كلما ازدادت القياسات، ازداد تعقيد خريطة المملكة. في مرصد المنشور تظهر طريقة جديدة للرؤية.',en:'The more measurements we take, the more tangled the kingdom’s map becomes. In the Prism Observatory a new way of seeing appears.'},
+  {who:'P',ar:'أنا لست خوارزمية تجميع. أعيد تمثيل القياسات بمحاور تلخّص اتجاهات التباين الأكبر.',en:'I am not a clustering algorithm. I re-express the measurements along axes that capture the largest directions of variance.'},
+  {who:'P',ar:()=>`${hh('اختر','اختاري')} أقل عدد من المكوّنات الجديدة يحفظ 85% من التباين على الأقل.`,en:'Choose the fewest new components that keep at least 85% of the variance.'}]);
+ if(n===4)dialogue([
+  {who:'N',ar:'وصلت إلى عرش الملك. كان يظن أن كل الألماس يجب أن يُفهم بطريقته وحدها، فتصدّع التاج حين عجز عن تفسير الاختلاف.',en:'You have reached the king’s throne. He believed every diamond must be understood by his method alone — and the crown cracked when it could not explain difference.'},
+  {who:'B',ar:'لا حقيقة إلا حقيقتي! لن أسمح لهذه الطرق المختلفة بإعادة تاجي!',en:'There is no truth but mine! I will not let these different methods restore my crown!'},
+  {who:'P',ar:()=>`${hh('استخدم','استخدمي')} القدرات الثلاث: 1 للتجميع، 2 للكثافة، 3 لاختصار الأبعاد، بحسب ما يطلبه الملك. و${hh('تفادَ','تفادي')} الشظايا!`,en:'Use the three abilities — 1 for grouping, 2 for density, 3 for dimension reduction — according to what the king demands. And dodge the shards!'}])}
+function startGame(){
+ if(!gender){toast(L('اختر البطل أو البطلة أولًا.','Choose your Keeper first.'),true);return}
+ audioReady();startAmbience();g.started=true;$('startOverlay').classList.add('hidden');announce(0);updateUI();
+ dialogue([
+  {who:'N',ar:'منذ زمن بعيد، كان تاج مملكة الألماس يكشف الأنماط الخفيّة بين أحجارها… حتى تحطّم وتفرّقت بلّوراته الست.',en:'Long ago, the crown of the Diamond Kingdom revealed the hidden patterns between its stones… until it shattered and its six crystals were scattered.'},
+  {who:'N',ar:()=>`${G('أنت حارس التاج الأخير','أنتِ حارسة التاج الأخيرة')}. إن ${G('استعدتَ','استعدتِ')} البلّورات و${G('اجتزتَ','اجتزتِ')} اختبارات الحراس الثلاثة، فقد ${G('تكشف','تكشفين')} سرّ الملك المتصدّع.`,en:'You are the last Keeper of the Crown. Recover the crystals and pass the trials of the three Guardians, and you may uncover the secret of the Fractured King.'},
+  {who:'K',ar:'أنا أريد نظامًا واضحًا: مجموعتان، ولكل ألماسة أقرب مركز.',en:'I want clear order: two groups, and every diamond belongs to its nearest centre.'},
+  {who:'D',ar:'وأنا أسأل: ماذا عن النقاط التي لا تنتمي إلى منطقة كثيفة؟',en:'And I ask: what about the points that belong to no dense region at all?'},
+  {who:'P',ar:()=>`لدينا منظور ثالث. لكن أولًا، ${G('اجمع','اجمعي')} البلّورات الست المتناثرة في الخزنة، و${G('تجنّب','تجنّبي')} الحرّاس الآليين. ثم ${G('عد','عودي')} إلى K-Means.`,en:'There is a third way of seeing. But first, gather the six scattered crystals in the vault — and beware the sentinels. Then return to K-Means.'}])}
+
+function pickFeature(f){
+ g.collected.add(f.id);g.combo=g.comboT>0?g.combo+1:1;g.comboT=6;const pts=90*Math.min(g.combo,4);givePoints(pts,f.x,f.y-30,g.combo>1?` ×${Math.min(g.combo,4)}`:'');
+ burst(f.x,f.y-34,f.col,28);snd('ping');toast(`✧ ${L('بلّورة','Crystal')} ${T(f.full)} · ${g.collected.size}/6`);updateUI();
+ if(g.collected.size===6){setInsight('استعدت البلّورات الست؛ الآن تستطيع رؤية الأدلة قبل أول محكمة.','Six crystals recovered — you can now study the evidence before the first trial.');
+  dialogue([{who:'P',ar:()=>`أحسنت! ${G('جمعتَ','جمعتِ')} البلّورات الست. ${G('افتح','افتحي')} سجل الأدلة لتبدأ المحاكمة.`,en:'Well done! All six crystals are yours. Open the evidence ledger before the trial begins.'}],()=>showEvidence())}}
+function pickDiamond(){g.holding=g.kCases[g.kRound];snd('ping');burst(600,405,'#f8dca0',26);const d=g.holding;
+ toast(L(`تم فحص الحجر: ${d.carat.toFixed(2)} قيراط · طول ${d.x.toFixed(2)} · عرض ${d.y.toFixed(2)} · عمق ${d.depth.toFixed(1)}%`,`Stone inspected: ${d.carat.toFixed(2)} ct · length ${d.x.toFixed(2)} · width ${d.y.toFixed(2)} · depth ${d.depth.toFixed(1)}%`));updateUI()}
+function deposit(type){
+ if(!g.holding)return;const d=g.holding,ok=d.class===type,vx=type===0?215:985;
+ if(ok){g.kRound++;g.kSuccess++;givePoints(220,vx,380);snd('win');burst(vx,330,type===0?'#34d1b6':'#f2b24c',34);toast(L('✓ صحيح: قياسات الحجر أقرب لهذه المجموعة. K-Means ينظر إلى القياسات الست بعد التقييس.','✓ Correct: the stone’s measurements sit closer to this group. K-Means looks at all six scaled measurements.'));g.holding=null;updateUI()}
+ else{const big=d.class===1;
+  loseHeart();setInsight(`تلميح المحاكمة: هذا الحجر يتبع مجموعة الألماس ${big?'الأكبر':'الأصغر'} بحسب K-Means.`,`Trial hint: K-Means places this stone in the ${big?'larger':'smaller'} diamond group.`);
+  toast(L(`✕ هذا الحجر يتبع مجموعة الألماس ${big?'الأكبر':'الأصغر'} بحسب K-Means. القيراط مؤشر، لكن القرار يعتمد على 6 قياسات بعد التقييس. جرّب الخزنة الأخرى؛ الحجر لا يزال معك.`,`✕ K-Means places this stone in the ${big?'larger':'smaller'} group. Carat is a hint, but the decision uses six scaled measurements. Try the other vault — you still hold the stone.`),true);updateUI();return}
+ if(g.kRound>=4){g.questComplete=true;g.allies.K=true;givePoints(450);
+  setInsight('K-Means وجد مجموعتين: أحجار أصغر وأحجار أكبر. لم يدخل السعر في التجميع.','K-Means found two groups: smaller stones and larger stones. Price never entered the clustering.');updateUI();
+  dialogue([
+   {who:'K',ar:`نجحت في ${g.kSuccess}/4. عملي لا يعتمد على القيراط وحده؛ استخدمت القياسات الست بعد StandardScaler.`,en:`You got ${g.kSuccess}/4. I never rely on carat alone — I used all six measurements after StandardScaler.`},
+   {who:'D',ar:'الآن عرفت كيف ننظّم الأحجار. لكن ماذا عن الأحجار البعيدة عن المناطق الكثيفة؟ تعال إلى كهفي.',en:'Now you know how we organise stones. But what about those far from any dense region? Come to my cavern.'}])}}
+function renderQuiz(){
+ const n=g.dbRound,radar=$('radar');
+ $('qEyebrow').textContent=L(`محاكمة الكثافة ${n+1} / 3`,`Density trial ${n+1} / 3`);
+ if(n===2){
+  $('qTitle').textContent=L('كيف يتغيّر اكتشاف المجموعات مع eps؟','How does cluster discovery change with eps?');
+  $('qDesc').textContent=L('على الخصائص الست: أي إعداد أعطى مجموعتين وعدد Noise أقل بين هذين الخيارين؟ اقرأ الدليل قبل الإجابة.','On the six features: which setting gave two clusters and fewer Noise points? Read the evidence before answering.');
+  $('qA').textContent='eps = 0.3';$('qB').textContent='eps = 0.5';
+  $('qFoot').textContent=L('دليل النوتبوك: eps=0.3 ← 30 مجموعة و2781 Noise؛ eps=0.5 ← مجموعتان و804 Noise.','Notebook evidence: eps=0.3 → 30 clusters and 2,781 Noise; eps=0.5 → 2 clusters and 804 Noise.');
+  radar.innerHTML=`<div class="eps"><span>0.3<b>${L('30 مجموعة','30 clusters')}</b></span><span>0.5<b>${L('مجموعتان','2 clusters')}</b></span></div>`;return}
+ const d=DATA.densityCases[n];
+ $('qTitle').textContent=n===0?L('هل هذه الألماسة محاطة بجيران؟','Is this diamond surrounded by neighbours?'):L('هل هذا الحجر معزول عن التجمعات؟','Is this stone isolated from the clusters?');
+ $('qDesc').textContent=L(`ألماسة حقيقية: ${d.carat.toFixed(2)} قيراط، عمق ${d.depth.toFixed(1)}%. eps=0.5 وmin_samples=10. هل هي Core أم Noise؟`,`A real diamond: ${d.carat.toFixed(2)} ct, depth ${d.depth.toFixed(1)}%. eps = 0.5 and min_samples = 10. Is it Core or Noise?`);
+ $('qA').textContent=L('🟢 نقطة Core كثيفة','🟢 Dense Core point');$('qB').textContent=L('🔴 نقطة Noise معزولة','🔴 Isolated Noise point');
+ $('qFoot').textContent=L('التمثيل بالرادار توضيحي، وليس عدد جيران الحجر الفعلي؛ سنكشف العدد بعد الإجابة.','The radar is illustrative, not the stone’s real neighbour count — the true count is revealed after you answer.');
+ radar.innerHTML='<div class="ring"></div><span class="dot me" style="left:50%;top:50%"></span>';const dense=d.type==='core',cnt=dense?31:3;
+ for(let i=0;i<cnt;i++){const r=dense?rand(0,46):rand(58,120),a=rand(0,TAU),dot=document.createElement('span');dot.className='dot';dot.style.left=`calc(50% + ${Math.cos(a)*r}px)`;dot.style.top=`calc(50% + ${Math.sin(a)*r*.6}px)`;dot.style.width=dot.style.height=(i%6===0?5:3)+'px';radar.appendChild(dot)}}
+function showDensityQuiz(){if(g.quiz)return;g.quiz=true;$('quiz').classList.remove('hidden');renderQuiz()}
+function answerDensity(type){
+ if(!g.quiz)return;g.quiz=false;$('quiz').classList.add('hidden');
+ const round=g.dbRound,correct=round===2?'eps05':DATA.densityCases[round].type,ok=type===correct;
+ const fact=round===2?L('eps=0.5 أعطى مجموعتين و804 Noise مقابل 30 مجموعة و2781 Noise عند eps=0.3.','eps=0.5 gave 2 clusters and 804 Noise, versus 30 clusters and 2,781 Noise at eps=0.3.'):L(`${DATA.densityCases[round].neighbors} جارًا ضمن eps=0.5؛ والتصنيف المعطى هو ${correct==='core'?'Core':'Noise'}.`,`${DATA.densityCases[round].neighbors} neighbours within eps=0.5 — its label is ${correct==='core'?'Core':'Noise'}.`);
+ if(ok){g.dbRound++;g.dbSuccess++;givePoints(180);snd('ping');toast(L('✓ صحيح! ','✓ Correct! ')+fact)}
+ else{loseHeart();setInsight('تلميح الكثافة: '+fact,'Density hint: '+fact);toast(L('✕ التفسير: ','✕ Explanation: ')+fact+L(' يمكنك إعادة فحص الماسح والمحاولة مجددًا.',' You can re-inspect the scanner and try again.'),true);updateUI();return}
+ const bc=BEACONS[g.dbRound-1];burst(bc.x,bc.y-30,'#7dffe6',26);updateUI();
+ if(g.dbRound>=3){g.questComplete=true;g.allies.D=true;givePoints(400);
+  setInsight('DBSCAN لا يفرض انضمام كل نقطة: في 6D وجد مجموعتين و804 نقاط Noise (eps=0.5).','DBSCAN does not force every point to join: in 6D it found two clusters and 804 Noise points (eps=0.5).');updateUI();
+  dialogue([
+   {who:'D',ar:`أنهيت ${g.dbSuccess}/3. قبل PCA وجدت مجموعتين و804 نقاط Noise بإعدادات eps=0.5.`,en:`You scored ${g.dbSuccess}/3. Before PCA I found two clusters and 804 Noise points with eps = 0.5.`},
+   {who:'K',ar:'إذن ليست كل نقطة تشبه جيرانها. كنت أرى جزءًا فقط من الصورة.',en:'So not every point resembles its neighbours. I was only seeing part of the picture.'},
+   {who:'P',ar:'والآن ستة قياسات تحتاج منظورًا أبسط. فلنذهب إلى المرصد.',en:'And now six measurements need a simpler perspective. To the observatory!'}])}}
+function choosePCA(n){
+ const pct=DATA.meta.pcaByN[n];
+ if(n===2){g.pcaPicked=n;g.questComplete=true;g.allies.P=true;givePoints(650);burst(PEDS[4].x,PEDS[4].y-60,'#d7b8ff',80);snd('win');
+  setInsight('PCA: مكوّنان جديدان يحتفظان بـ88.12% من التباين، ولا يثبت وحده تحسّن جودة التجميع.','PCA: two new components keep 88.12% of the variance — which alone does not prove better clustering.');updateUI();
+  dialogue([
+   {who:'P',ar:'نجح المنشور! حوّلنا ست خصائص إلى مكوّنين يحتفظان بـ88.12% من التباين. بقي نحو 11.88% خارج التمثيل.',en:'The prism works! Six features became two components that keep 88.12% of the variance. About 11.88% falls outside the representation.'},
+   {who:'K',ar:'ظهرت مجموعتان متشابهتان في التمثيل الجديد، مع تغيير 27 حالة فقط بعد مطابقة أسماء المجموعات.',en:'Two similar groups appear in the new representation — only 27 cases changed after matching cluster labels.'},
+   {who:'P',ar:'Silhouette ارتفع من 0.429 إلى 0.487، لكنه حُسب في فضاءين مختلفين؛ لا يُثبت ذلك تحسّن النموذج.',en:'Silhouette rose from 0.429 to 0.487, but in two different spaces — that does not prove the model improved.'},
+   {who:'D',ar:'وبعد PCA ومع eps=0.3 وجدت مجموعة كثيفة واحدة و311 Noise. حتى إعداداتنا تغيّر الرؤية!',en:'After PCA, with eps = 0.3, I found one dense cluster and 311 Noise points. Even our settings change the view!'}])}
+ else{snd('wrong');const ar=n===1?`مكوّن واحد يحفظ ${pct.toFixed(2)}% فقط، أي أقل من 85%.`:`${n} مكوّنات تحفظ ${pct.toFixed(2)}%، لكن مكوّنين فقط يكفيان؛ المطلوب أقل عدد.`,en=n===1?`One component keeps only ${pct.toFixed(2)}% — below 85%.`:`${n} components keep ${pct.toFixed(2)}%, but two are enough — the goal is the fewest.`;
+  setInsight('تلميح PCA: '+ar,'PCA hint: '+en);toast('✕ '+L(ar,en),true);const pd=PEDS.find(x=>x.n===n);burst(pd.x,pd.y-40,'#b79dff',16)}}
+function bossAttack(key){
+ if(g.bossCooldown>0||g.bossHP<=0||g.dialog||g.quiz||!g.started)return;const need=g.bossOrder[g.bossStep];
+ if(key!==need){loseHeart();setInsight('تلميح مواجهة الملك: '+BWHY[need].ar,'Duel hint: '+BWHY[need].en);toast('✕ '+T(BWHY[need]),true);g.bossCooldown=.35;return}
+ const c=PN[key].c;g.bossHP--;g.bossStep++;g.bossCooldown=.75;givePoints(350,985,300);burst(975,330,c,80);flash=.25;hitT=.6;snd('win');projectiles=[];
+ toast(`✓ ${PN[key].short} ${L('يجيب عن السؤال المناسب!','answers the right question!')} ${3-g.bossHP} / 3`);updateUI();
+ if(g.bossHP<=0){g.completed=true;givePoints(1000);
+  setInsight('انكشفت الحقيقة: لا توجد طريقة واحدة تشرح كل جوانب الألماس. لكل نموذج وظيفة وحدود.','The truth is out: no single method explains every aspect of diamonds. Each model has a purpose — and limits.');
+  setTimeout(()=>dialogue([
+   {who:'B',ar:'كيف… اتحدتم مع أن طرقكم تختلف؟ كنت أظن أن الحقيقة لا بد أن تكون واحدة.',en:'How… you united, though your methods differ? I believed the truth had to be one.'},
+   {who:'N',ar:'لم يُسرق التاج يومًا. الحراس أخفوا البلّورات، وكل واحد منهم كان يحمي جزءًا من المعرفة.',en:'The crown was never stolen. The Guardians hid the crystals, each protecting a fragment of knowledge.'},
+   {who:'K',ar:'أنا أُنظّم الأحجار بحسب القرب من المراكز، لكنني لا أكشف كل شيء.',en:'I organise stones by closeness to centres, but I do not reveal everything.'},
+   {who:'D',ar:'وأنا أرى التجمعات الكثيفة والنقاط التي لا تتبعها، لكن ضوضائي لا تعني حجرًا معيبًا.',en:'I see dense groups and the points that follow none — but my noise does not mean a defective stone.'},
+   {who:'P',ar:'وأنا أبسّط المشهد لأكشف الأنماط، لكن أترك بعض التباين خلفي.',en:'I simplify the scene to reveal patterns, but I leave some variance behind.'},
+   {who:'B',ar:'تصدّع التاج لأنني رأيت جزءًا من الصورة وظننته الحقيقة كلها. سامحوني.',en:'The crown cracked because I saw one part of the picture and mistook it for the whole truth. Forgive me.'},
+   {who:'N',ar:()=>`${playerLabel()} أعاد التاج إلى نوره… ليس بالقوة وحدها، بل بجمع الأدلة وفهم حدود كل طريقة.`,en:'The Keeper restored the crown to its light — not by strength alone, but by gathering evidence and understanding the limits of every method.'}],
+   ()=>{renderEnd();$('endOverlay').classList.remove('hidden');snd('win')}),900)}}
+
+/* ============ interaction ============ */
+function spots(){const a=[];
+ if(g.stage===0){a.push({id:'K',x:1010,y:430,r:95},{id:'D',x:405,y:340,r:85},{id:'P',x:800,y:360,r:85});if(g.ready)a.push({id:'gate',x:1135,y:445,r:95})}
+ if(g.stage===1){if(!g.holding&&!g.questComplete)a.push({id:'dia',x:600,y:440,r:85});if(g.holding){a.push({id:'vL',x:215,y:400,r:105},{id:'vR',x:985,y:400,r:105})}if(g.questComplete)a.push({id:'gate',x:1130,y:505,r:95})}
+ if(g.stage===2){if(!g.questComplete)a.push({id:'beacon',x:BEACONS[g.dbRound].x,y:BEACONS[g.dbRound].y,r:80});else a.push({id:'gate',x:1130,y:505,r:95})}
+ if(g.stage===3){if(!g.questComplete)PEDS.forEach(p=>a.push({id:'ped',n:p.n,x:p.x,y:p.y,r:75}));else a.push({id:'gate',x:1135,y:505,r:100})}
+ return a}
+function nearSpot(){const p=g.player;let best=null,bd=1e9;for(const s of spots()){const d=dist(p,s);if(d<s.r&&d<bd){best=s;bd=d}}return best}
+function interact(){
+ if(!g.started||g.completed||g.evidenceOpen)return;if(g.dialog){nextDialogue();return}if(g.quiz)return;
+ const s=nearSpot();if(!s)return;
+ if(s.id==='gate'){enterStage(g.stage+1);return}
+ if(g.stage===0){
+  if(s.id==='K'){
+   if(g.collected.size<6){const m=6-g.collected.size;dialogue([{who:'K',ar:()=>`باقي ${arN(m,'بلّورة واحدة','بلّورتان','بلّورات')}. ${G('اجمعها','اجمعيها')} أولًا!`,en:`${m} crystal${m>1?'s':''} still missing. Find ${m>1?'them':'it'} first, Keeper!`}])}
+   else if(!g.ready){g.ready=true;burst(1135,400,'#f8dca0',60);snd('portal');dialogue([{who:'K',ar:'المفتاح K=2! أعلى Silhouette بين K من 2 إلى 8 كان نحو 0.429 في الفضاء الأصلي. المحكمة جاهزة!',en:'The key is K = 2! Among K = 2 to 8, the best silhouette score was about 0.429 in the original space. My court is ready!'}]);updateUI()}
+   else dialogue([{who:'K',ar:'البوابة مفتوحة. المحكمة بانتظارك!',en:'The gate stands open. My court awaits you!'}])}
+  else if(s.id==='D')dialogue([{who:'D',ar:'أحب اكتشاف الجيران المتقاربين. لا أحتاج k مسبقًا، وأكشف النقاط المعزولة بلا مجاملة.',en:'I prefer to find real dense neighbourhoods. I need no fixed k, and I call out isolated points without apology.'}]);
+  else if(s.id==='P')dialogue([{who:'P',ar:'أنا لست خوارزمية تجميع. أغيّر المحاور لأحتفظ باتجاهات أعلى تباين.',en:'I am not a clustering algorithm. I rotate the axes to keep the directions of greatest variance.'}])}
+ else if(g.stage===1){if(s.id==='dia')pickDiamond();else if(s.id==='vL')deposit(0);else if(s.id==='vR')deposit(1)}
+ else if(g.stage===2){if(s.id==='beacon')showDensityQuiz()}
+ else if(g.stage===3){if(s.id==='ped')choosePCA(s.n)}}
+function canAct(){return g.started&&!g.dialog&&!g.quiz&&!g.evidenceOpen&&!g.completed}
+function dash(){const p=g.player;if(p.cd>0||!canAct())return;let ix=(keys.arrowright||keys.d?1:0)-(keys.arrowleft||keys.a?1:0),iy=(keys.arrowdown||keys.s?1:0)-(keys.arrowup||keys.w?1:0);if(!ix&&!iy){ix=p.face}const m=Math.hypot(ix,iy);p.dx=ix/m;p.dy=iy/m;p.dashT=.16;p.cd=.9;p.inv=Math.max(p.inv,.32);snd('dash');rings.push({x:p.x,y:p.y,c:'#ffffff',t:0})}
+
+/* ============ update ============ */
+function firePattern(){
+ const ox=985,oy=335,p=g.player,pat=g.pat++%4,ang=Math.atan2(p.y-40-oy,p.x-ox),mk=(a,sp)=>projectiles.push({x:ox,y:oy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:10,life:7});
+ if(pat===0)mk(ang,215);
+ else if(pat===1){mk(ang-.3,185);mk(ang,200);mk(ang+.3,185)}
+ else if(pat===2){for(let i=0;i<10;i++)mk(i*TAU/10+clock,125)}
+ else{mk(ang,260);setTimeout(()=>{if(g&&g.stage===4&&!g.completed&&g.started)mk(Math.atan2(g.player.y-40-oy,g.player.x-ox),260)},260)}
+ burst(ox,oy,'#ff4d6d',10)}
+function update(dt){
+ clock+=dt;shake=Math.max(0,shake-dt);fade=Math.max(0,fade-dt*1.25);hitT=Math.max(0,hitT-dt);
+ rings.forEach(r=>r.t+=dt);rings=rings.filter(r=>r.t<.65);pops.forEach(q=>q.t+=dt);pops=pops.filter(q=>q.t<1.2);ghosts.forEach(q=>q.t-=dt*3.2);ghosts=ghosts.filter(q=>q.t>0);
+ const p=g.player;
+ if(!canAct()){p.walk*=.86;p.vx*=.8;p.vy*=.8;return}
+ p.inv=Math.max(0,p.inv-dt);p.cd=Math.max(0,p.cd-dt);p.dashT=Math.max(0,p.dashT-dt);g.comboT=Math.max(0,g.comboT-dt);g.bossCooldown=Math.max(0,g.bossCooldown-dt);
+ let ix=(keys.arrowright||keys.d?1:0)-(keys.arrowleft||keys.a?1:0),iy=(keys.arrowdown||keys.s?1:0)-(keys.arrowup||keys.w?1:0);const l=Math.hypot(ix,iy);if(l){ix/=l;iy/=l}
+ if(p.dashT>0){p.vx=p.dx*820;p.vy=p.dy*820;if(Math.random()<.9)ghosts.push({x:p.x,y:p.y,f:p.face,t:1,ph:p.ph})}
+ else{const sp=g.holding?232:270,k=Math.min(1,dt*(l?11:8));p.vx+=(ix*sp-p.vx)*k;p.vy+=(iy*sp-p.vy)*k}
+ p.x=clamp(p.x+p.vx*dt,62,1138);p.y=clamp(p.y+p.vy*dt,285,615);
+ const spd=Math.min(1.4,Math.hypot(p.vx,p.vy)/270),oph=p.ph;p.walk+=(Math.min(1,spd*1.15)-p.walk)*Math.min(1,dt*10);if(spd>.08)p.ph+=dt*(5+spd*8);
+ if(spd>.3&&Math.floor(p.ph/Math.PI)!==Math.floor(oph/Math.PI))for(let i=0;i<4;i++)particles.push({x:p.x+rand(-8,8),y:p.y,vx:rand(-22,22),vy:rand(-26,-6),life:.38,ttl:.38,c:'#b8a6ff',size:rand(1.4,3)});
+ if(Math.abs(p.vx)>25)p.face=p.vx>0?1:-1;
+ // followers
+ ['K','D','P'].filter(a=>g.allies[a]).forEach((a,i)=>{const f=fol[i]||(fol[i]={x:p.x-40,y:p.y,f:1,w:0}),T=i?fol[i-1]:p,d=Math.hypot(T.x-f.x,T.y-f.y),m=Math.max(0,d-48)/Math.max(d,1)*Math.min(1,dt*5.5),nx=f.x+(T.x-f.x)*m,ny=f.y+(T.y-f.y)*m;
+  f.w+=(Math.min(1,Math.hypot(nx-f.x,ny-f.y)/dt/190)-f.w)*Math.min(1,dt*8);f.ph=(f.ph||0)+dt*(4+f.w*8);if(Math.abs(T.x-f.x)>6)f.f=T.x>f.x?1:-1;f.x=nx;f.y=ny});
+ // hazards
+ for(const h of g.haz){
+  if(h.type==='patrol'||h.type==='sweep'){const Tg=h.pts[h.i],dx=Tg[0]-h.x,dy=Tg[1]-h.y,d=Math.hypot(dx,dy);if(d<4){h.i=h.type==='sweep'?1-h.i:(h.i+1)%h.pts.length}else{h.x+=dx/d*h.sp*dt;h.y+=dy/d*h.sp*dt;h.hd=Math.atan2(dy,dx)}}
+  else{h.x+=h.vx*dt;h.y+=h.vy*dt;if(h.x<130||h.x>1070){h.vx*=-1;h.x=clamp(h.x,130,1070)}if(h.y<330||h.y>600){h.vy*=-1;h.y=clamp(h.y,330,600)}h.vx+=rand(-1,1)*60*dt;h.vy+=rand(-1,1)*60*dt;const sp=Math.hypot(h.vx,h.vy)||1;h.vx*=105/sp;h.vy*=105/sp}
+  if(p.inv<=0&&Math.hypot(h.x-p.x,h.y-p.y)<h.r+14){loseHeart();p.inv=1.4;const a=Math.atan2(p.y-h.y,p.x-h.x);p.vx=Math.cos(a)*440;p.vy=Math.sin(a)*440}}
+ // stage specifics
+ if(g.stage===0)for(const f of FEATS)if(!g.collected.has(f.id)&&Math.hypot(p.x-f.x,p.y-f.y)<36){pickFeature(f);break}
+ if(g.stage===1&&!g.questComplete&&!g.holding&&Math.hypot(p.x-600,p.y-440)<34)pickDiamond();
+ if(g.stage===2){let n=0;for(const q of DP){const dx=(q.x-p.x)/84,dy=(q.y-p.y)/38;if(dx*dx+dy*dy<1)n++}g.neigh=n}
+ if(g.stage===4&&g.bossHP>0){g.shotTimer-=dt;if(g.shotTimer<=0){firePattern();g.shotTimer=rand(1.3,1.9)}
+  for(const q of projectiles){q.x+=q.vx*dt;q.y+=q.vy*dt;q.life-=dt;if(p.inv<=0&&Math.hypot(q.x-p.x,q.y-(p.y-36))<q.r+14){p.inv=1.3;q.life=0;loseHeart()}}
+  projectiles=projectiles.filter(q=>q.life>0&&q.x>-20&&q.x<W+20&&q.y>200&&q.y<H+20)}}
+
+/* ============ render ============ */
+function atmosphere(t){
+ const p=STP[g.stage];ctx.save();ctx.globalCompositeOperation='lighter';
+ if(g.stage===0)[130,365,600,835,1070].forEach((x,i)=>{const sw=Math.sin(t*.35+i)*14,q=ctx.createLinearGradient(x,60,x+90,560);q.addColorStop(0,rg('#ffb070',.2));q.addColorStop(1,rg('#ffb070',0));ctx.fillStyle=q;ctx.beginPath();ctx.moveTo(x-50+sw,70);ctx.lineTo(x+50+sw,70);ctx.lineTo(x+230+sw*2,600);ctx.lineTo(x-90+sw*2,600);ctx.fill()});
+ if(g.stage===1){const a=Math.sin(t*1.1)*.12,cx=600,cy=96;ctx.globalCompositeOperation='source-over';ctx.lineCap='round';ctx.strokeStyle='#e8b765';ctx.lineWidth=6;ln(ctx,cx-130*Math.cos(a),cy-130*Math.sin(a),cx+130*Math.cos(a),cy+130*Math.sin(a),'#e8b765',6);ln(ctx,cx,cy-26,cx,cy,'#e8b765',5);
+  [[-1,'#34d1b6'],[1,'#f2b24c']].forEach(([s,col])=>{const x=cx+s*130*Math.cos(a),y=cy+s*130*Math.sin(a);ln(ctx,x,y,x-34,y+56,rg(col,.7),1.6);ln(ctx,x,y,x+34,y+56,rg(col,.7),1.6);ell(ctx,x,y+58,40,10,rg(col,.35),col,2.2);glow(ctx,x,y+58,60,col,.35)});ctx.globalCompositeOperation='lighter'}
+ if(g.stage===2){for(let i=0;i<3;i++){const k=((t*.3+i/3)%1);ctx.globalAlpha=(1-k)*.8;ell(ctx,600,468,50+k*500,12+k*122,null,'#9ffff0',1.8)}ctx.globalAlpha=1}
+ if(g.stage===3){const cols=['#ff7ac6','#ffd36b','#6fe8cf','#8ab4ff','#a58bff'];ctx.save();ctx.translate(600,150);glow(ctx,0,0,90,'#ffffff',.5);
+  poly(ctx,[[0,-22],[20,14],[-20,14]],'rgba(255,255,255,.3)','#fff',2);cols.forEach((col,i)=>{const a=Math.PI/2+Math.sin(t*.6)*.5+(i-2)*.11;ctx.fillStyle=rg(col,.22);ctx.beginPath();ctx.moveTo(0,10);ctx.lineTo(Math.cos(a-.035)*760,10+Math.sin(a-.035)*760);ctx.lineTo(Math.cos(a+.035)*760,10+Math.sin(a+.035)*760);ctx.fill()});ctx.restore()}
+ if(g.stage===4){[[60],[210],[1140]].forEach(([x],i)=>{const fl=Math.sin(t*17+i*2)*7+Math.sin(t*9+i)*4;glow(ctx,x,250,110+fl,'#ff9d4d',.5);ell(ctx,x,236,7+fl*.2,16+fl*.5,'#ffd36b')})}
+ // motes
+ for(const m of MOTES){let y=(m.y-t*m.v*(g.stage===4?2.2:1))%H;if(y<0)y+=H;ctx.globalAlpha=.2+.5*Math.abs(Math.sin(t*1.5+m.p));ctx.fillStyle=p.mote;ctx.beginPath();ctx.arc(m.x+Math.sin(t*.7+m.p)*26,y,m.s,0,TAU);ctx.fill()}
+ ctx.restore()}
+
+function pickAlpha(p){return p.inv>0&&Math.floor(clock*14)%2?.35:1}
+function drawHero(c,p){figure(c,{role:'H',fem:gender==='female',x:p.x,y:p.y,s:1,t:clock,walk:p.walk,ph:p.ph,face:p.face,alpha:pickAlpha(p)})}
+function npcItem(items,role,x,y,s=1){items.push({y,fn:()=>{figure(ctx,{role,x,y,s,t:clock+x*.01,face:g.player.x<x?-1:1,walk:0,ph:0})}})}
+function npcName(role,x,y,s=1){label(ctx,x,y+24,PN[role].short,PN[role].c,11)}
+
+function draw(){
+ const p=g.player,t=clock;ctx.setTransform(S,0,0,S,0,0);
+ ctx.save();if(shake>0)ctx.translate(rand(-1,1)*shake*14,rand(-1,1)*shake*10);
+ const bgc=BG[g.stage]||(BG[g.stage]=paintStage(g.stage));
+ ctx.drawImage(bgc,(600-p.x)*.012-12,(400-p.y)*.006-7,W+24,H+14);
+ atmosphere(t);
+ const items=[],tops=[];
+ // ---- stage layers
+ if(g.stage===0){
+  for(const f of FEATS){if(g.collected.has(f.id))continue;const k=.5+.5*Math.sin(t*3+f.x);ell(ctx,f.x,f.y,30+k*6,12+k*2,rg(f.col,.12),rg(f.col,.5+k*.4),1.8)}
+  npcItem(items,'K',1010,430);npcItem(items,'D',405,340);npcItem(items,'P',800,360);
+  for(const f of FEATS){if(g.collected.has(f.id))continue;items.push({y:f.y,fn:()=>gem(ctx,f.x,f.y-38+Math.sin(t*2.4+f.x)*6,17,f.col,t,f.x*.01)});tops.push(()=>label(ctx,f.x,f.y+20,T({ar:f.ar,en:f.en}),f.col,12))}
+  items.push({y:445,fn:()=>drawPortal(ctx,GATE[0].x,GATE[0].y,g.ready,'#f8dca0',t)});
+  tops.push(()=>{npcName('K',1010,430);npcName('D',405,340);npcName('P',800,360)})}
+ if(g.stage===1){
+  const hl=g.holding;[[215,'#34d1b6'],[985,'#f2b24c']].forEach(([x,col])=>{const k=.5+.5*Math.sin(t*3);ell(ctx,x,400,62,22,rg(col,hl?.16+k*.1:.07),rg(col,hl?.9:.45),2);
+   const cy=340+Math.sin(t*2+x)*4;ln(ctx,x-14,cy,x+14,cy,col,2.5);ln(ctx,x,cy-14,x,cy+14,col,2.5);ell(ctx,x,cy,9,9,null,col,2)});
+  tops.push(()=>{label(ctx,215,330,L('صغيرة','Small'),'#34d1b6',13);label(ctx,985,330,L('كبيرة','Large'),'#f2b24c',13)});
+  npcItem(items,'K',600,335,.92);tops.push(()=>npcName('K',600,335));
+  if(!g.holding&&!g.questComplete)items.push({y:440,fn:()=>{glow(ctx,600,440,90,'#f8dca0',.35);gem(ctx,600,402+Math.sin(t*4)*6,22,'#ffe9b8',t,0)}});
+  if(g.questComplete)items.push({y:505,fn:()=>drawPortal(ctx,GATE[1].x,GATE[1].y,true,'#a58bff',t)})}
+ if(g.stage===2){
+  ctx.save();ctx.globalCompositeOperation='lighter';
+  for(const q of DP){const dx=(q.x-p.x)/84,dy=(q.y-p.y)/38,inn=dx*dx+dy*dy<1,flick=.65+.35*Math.sin(t*2+q.x);
+   if(inn&&g.started){ln(ctx,p.x,p.y-8,q.x,q.y,'rgba(125,255,230,.12)',1)}
+   ctx.fillStyle=q.noise?(inn?'#ff9ab0':'rgba(255,100,140,.65)'):(inn?'#d8fff6':`rgba(100,240,215,${.45*flick})`);ctx.beginPath();ctx.arc(q.x,q.y,inn?3.1:2.1,0,TAU);ctx.fill()}
+  ctx.restore();
+  BEACONS.forEach((bc,i)=>{if(i<g.dbRound){ell(ctx,bc.x,bc.y,24,9,'rgba(125,255,230,.1)','rgba(125,255,230,.6)',1.6);return}
+   const cur=i===g.dbRound&&!g.questComplete;ell(ctx,bc.x,bc.y,34,13,rg('#34d1b6',cur?.2:.06),rg('#7dffe6',cur?.9:.3),1.8);
+   items.push({y:bc.y,fn:()=>{ctx.globalAlpha=cur?1:.4;gem(ctx,bc.x,bc.y-38+Math.sin(t*3+i)*5,18,'#7dffe6',t,i);ctx.globalAlpha=1}});if(cur)tops.push(()=>label(ctx,bc.x,bc.y+22,L('فحص ','Scan ')+(i+1),'#7dffe6',12))});
+  npcItem(items,'D',1075,310);tops.push(()=>npcName('D',1075,310));
+  if(g.questComplete)items.push({y:505,fn:()=>drawPortal(ctx,GATE[2].x,GATE[2].y,true,'#7dffe6',t)})}
+ if(g.stage===3){
+  PEDS.forEach(pd=>{const sel=g.pcaPicked===pd.n,pct=DATA.meta.pcaByN[pd.n],hh=pct*.78,col=pd.n===2?'#f8dca0':'#a58bff',nr=dist(p,pd)<75&&!g.questComplete;
+   items.push({y:pd.y,fn:()=>{
+    glow(ctx,pd.x,pd.y-hh/2,110,col,sel||nr?.4:.2);ell(ctx,pd.x,pd.y+34,68,15,'rgba(0,0,0,.5)');
+    rr(ctx,pd.x-54,pd.y+4,108,34,10,'#1a1452',rg(col,.85),1.8);ell(ctx,pd.x,pd.y+4,54,12,'#2a2090',rg(col,.95),2);
+    const bar=ctx.createLinearGradient(0,pd.y-hh,0,pd.y);bar.addColorStop(0,rg(col,.95));bar.addColorStop(1,rg(col,.2));ctx.fillStyle=bar;ctx.fillRect(pd.x-16,pd.y-hh,32,hh);ctx.strokeStyle=rg('#ffffff',.7);ctx.lineWidth=1.3;ctx.strokeRect(pd.x-16,pd.y-hh,32,hh);
+    const th=pd.y-85*.78;ctx.setLineDash([4,3]);ln(ctx,pd.x-30,th,pd.x+30,th,'#ff7ac6',1.6);ctx.setLineDash([]);
+    gem(ctx,pd.x,pd.y-hh-16+Math.sin(t*2+pd.x)*3,9,col,t,pd.n,false);
+    txt(ctx,pd.n+' PCs',pd.x,pd.y+22,15,'#fff',900,'center','ltr')}});
+   tops.push(()=>{txt(ctx,pct.toFixed(2)+'%',pd.x,pd.y-hh-40,13,'#f4efff',800)})});
+  tops.push(()=>{const x=600,y=222;rr(ctx,x-250,y-17,500,34,17,'rgba(7,10,22,.84)',rg('#ff7ac6',.8),1.4);txt(ctx,L('الهدف: حفظ 85% من التباين بأقل عدد من المكوّنات (الخط الوردي)','Goal: keep 85% of the variance with the fewest components (pink line)'),x,y+1,13,'#fff',700)});
+  npcItem(items,'P',1100,345);tops.push(()=>npcName('P',1100,345));
+  if(g.questComplete)items.push({y:505,fn:()=>drawPortal(ctx,GATE[3].x,GATE[3].y,true,'#a58bff',t)})}
+ if(g.stage===4){
+  items.push({y:440,fn:()=>bossFig(ctx,985,445,t,g.bossHP,hitT,g.shotTimer<.4)});
+  tops.push(()=>{for(const q of projectiles){glow(ctx,q.x,q.y,30,'#ff4d6d',.6);gem(ctx,q.x,q.y,q.r*.8,'#ff6b88',t*2,q.x*.01,false)}
+   const k=g.bossOrder[g.bossStep];if(k&&!g.dialog){const c=PN[k].c,x=600,y=118;rr(ctx,x-290,y-34,580,70,16,'rgba(8,6,18,.88)',rg(c,.85),1.6);
+    txt(ctx,L('الملك يطالب','THE KING DEMANDS'),x,y-16,11,c,900);txt(ctx,T(BPROMPT[k]),x,y+8,20,'#fff',900);
+    for(let i=0;i<3;i++)ell(ctx,x-24+i*24,y+27,5,5,i<g.bossStep?PN[g.bossOrder[i]].c:'rgba(255,255,255,.18)',null)}})}
+ // hazards
+ for(const h of g.haz)items.push({y:h.y,fn:()=>drawSentinel(ctx,h,t)});
+ // followers + hero
+ ['K','D','P'].filter(a=>g.allies[a]).forEach((a,i)=>{const f=fol[i];if(f)items.push({y:f.y,fn:()=>figure(ctx,{role:a,x:f.x,y:f.y,s:.62,t:t+i,face:f.f,walk:f.w,ph:f.ph||0})})});
+ for(const q of ghosts)items.push({y:q.y-1,fn:()=>figure(ctx,{role:'H',fem:gender==='female',x:q.x,y:q.y,s:1,t,walk:1,ph:q.ph,face:q.f,alpha:q.t*.3})});
+ items.push({y:p.y,fn:()=>{drawHero(ctx,p);if(g.holding&&g.stage===1){gem(ctx,p.x,p.y-132+Math.sin(t*4)*3,13,'#ffe9b8',t,0)}}});
+ items.sort((a,b)=>a.y-b.y);items.forEach(i=>i.fn());
+ tops.forEach(f=>f());
+ // stage 2 neighbour readout
+ if(g.stage===2&&g.started&&!g.dialog&&!g.quiz){const n=g.neigh,core=n>=10,col=core?'#7dffe6':'#ff9ab0';ell(ctx,p.x,p.y,84,38,rg(col,.06),rg(col,.75),1.8);
+  label(ctx,p.x,p.y+46,L(`جيران داخل الحلقة: ${n} · ${core?'Core':'أقل من 10'}`,`Neighbours in ring: ${n} · ${core?'Core':'< 10'}`),col,11)}
+ // carried diamond card
+ if(g.stage===1&&g.holding){const d=g.holding,s=L(`قيراط ${d.carat.toFixed(2)} | X ${d.x.toFixed(2)} | Y ${d.y.toFixed(2)} | عمق ${d.depth.toFixed(1)}%`,`${d.carat.toFixed(2)} ct | X ${d.x.toFixed(2)} | Y ${d.y.toFixed(2)} | depth ${d.depth.toFixed(1)}%`),cx=clamp(p.x,160,1040),cy=p.y-170;
+  rr(ctx,cx-155,cy-17,310,34,10,'rgba(7,10,22,.9)',rg('#f8dca0',.8),1.4);txt(ctx,s,cx,cy+1,12.5,'#f8dca0',800)}
+ // dash cooldown arc
+ if(g.started&&g.player.cd>0){const k=1-g.player.cd/.9;ctx.strokeStyle='rgba(248,220,160,.8)';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(p.x,p.y+14,16,0,TAU*k);ctx.stroke()}
+ // interact prompt
+ if(g.started&&!g.dialog&&!g.quiz&&!g.evidenceOpen&&nearSpot())keycap(ctx,p.x,p.y-122,t,'E');
+ // particles / rings / pops
+ ctx.save();ctx.globalCompositeOperation='lighter';for(const q of particles){ctx.globalAlpha=clamp(q.life/q.ttl,0,1);ctx.fillStyle=q.c;ctx.beginPath();ctx.arc(q.x,q.y,q.size,0,TAU);ctx.fill()}ctx.restore();ctx.globalAlpha=1;
+ for(const r of rings){const k=r.t/.65;ctx.globalAlpha=Math.max(0,1-k);ell(ctx,r.x,r.y,14+k*120,(14+k*120)*.42,null,r.c,4*(1-k)+.5)}ctx.globalAlpha=1;
+ for(const q of pops){ctx.globalAlpha=Math.max(0,1-q.t/1.2);txt(ctx,q.s,q.x,q.y-q.t*50,22,'#f8dca0',900)}ctx.globalAlpha=1;
+ if(flash>0){ctx.fillStyle=`rgba(255,93,122,${flash*.3})`;ctx.fillRect(-20,-20,W+40,H+40)}
+ ctx.restore();
+ if(fade>0){ctx.fillStyle=`rgba(6,8,15,${Math.min(1,fade)})`;ctx.fillRect(0,0,W,H)}}
+
+function frame(now){
+ const dt=Math.min(.045,Math.max(.001,(now-last)/1000));last=now;
+ update(dt);flash=Math.max(0,flash-dt);
+ for(const q of particles){q.x+=q.vx*dt;q.y+=q.vy*dt;q.life-=dt;q.vy+=50*dt}particles=particles.filter(q=>q.life>0);
+ const d=g.dialog;if(d&&d.typing){d.n+=dt*(LANG==='ar'?70:90);if(d.n>=d.full.length){d.n=d.full.length;d.typing=false}$('dLine').textContent=d.full.slice(0,Math.floor(d.n))}
+ draw();requestAnimationFrame(frame)}
+
+/* ============ input ============ */
+const GAMEKEYS=['arrowup','arrowdown','arrowleft','arrowright','w','a','s','d','e','enter',' ','1','2','3'];
+function onKey(e,down){
+ const k=e.key.toLowerCase();if(!g)return;
+ if(!down){keys[k]=false;return}
+ const overlayOpen=!$('startOverlay').classList.contains('hidden');
+ if(GAMEKEYS.includes(k)&&g.started&&!overlayOpen&&e.target.tagName!=='INPUT')e.preventDefault();
+ if(e.repeat&&!['w','a','s','d','arrowleft','arrowright','arrowup','arrowdown'].includes(k))return;
+ keys[k]=true;
+ if(g.evidenceOpen||!g.started)return;
+ if(g.dialog){if(['enter','e',' '].includes(k))nextDialogue();return}
+ if(g.quiz)return;if(g.completed)return;
+ if(k==='e'||k==='enter')interact();
+ if(k===' ')dash();
+ if(g.stage===4){if(k==='1')bossAttack('K');if(k==='2')bossAttack('D');if(k==='3')bossAttack('P')}}
+addEventListener('keydown',e=>onKey(e,true));addEventListener('keyup',e=>onKey(e,false));
+addEventListener('blur',()=>{keys={}});
+
+/* ============ language + wiring ============ */
+function applyLang(){
+ document.documentElement.lang=LANG;document.documentElement.dir=LANG==='ar'?'rtl':'ltr';
+ document.querySelectorAll('[data-ar]').forEach(e=>{const v=LANG==='ar'?e.dataset.ar:e.dataset.en;if(e.hasAttribute('data-h'))e.innerHTML=v;else e.textContent=v});
+ $('langAr').setAttribute('aria-pressed',String(LANG==='ar'));$('langEn').setAttribute('aria-pressed',String(LANG==='en'));
+ refreshAudioUI();
+ if(g){setStartText();updateUI();if(g.dialog)showDialog(true);if(g.quiz)renderQuiz();if(g.evidenceOpen)renderEDA();if(!$('endOverlay').classList.contains('hidden'))renderEnd()}}
+function setLang(l){LANG=l;try{localStorage.setItem('cc_lang',l)}catch(e){}applyLang()}
+$('langAr').onclick=e=>{setLang('ar');e.currentTarget.blur()};$('langEn').onclick=e=>{setLang('en');e.currentTarget.blur()};
+$('chooseHe').onclick=e=>{chooseGender('male');e.currentTarget.blur()};$('chooseShe').onclick=e=>{chooseGender('female');e.currentTarget.blur()};
+$('startBtn').onclick=e=>{e.currentTarget.blur();startGame()};
+$('dNext').onclick=e=>{e.currentTarget.blur();nextDialogue()};$('skipBtn').onclick=e=>{e.currentTarget.blur();nextDialogue(true)};
+$('dialogue').addEventListener('click',e=>{if(e.target.closest('button'))return;nextDialogue()});
+$('qA').onclick=()=>answerDensity(g.dbRound===2?'eps03':'core');$('qB').onclick=()=>answerDensity(g.dbRound===2?'eps05':'noise');
+$('closeEvidence').onclick=e=>{e.currentTarget.blur();closeEvidence()};$('evidenceBtn').onclick=e=>{e.currentTarget.blur();showEvidence()};
+$('playAgain').onclick=e=>{e.currentTarget.blur();reset()};$('resetBtn').onclick=e=>{e.currentTarget.blur();reset()};
+$('musicBtn').onclick=e=>{e.currentTarget.blur();musicOn=!musicOn;refreshAudioUI();if(musicOn&&g.started)startAmbience();else stopAmbience()};
+$('fullBtn').onclick=e=>{e.currentTarget.blur();const el=document.querySelector('.stagecol');if(document.fullscreenElement)document.exitFullscreen();else if(el.requestFullscreen)el.requestFullscreen().catch(()=>{})};
+document.querySelectorAll('.skill').forEach(b=>b.onclick=e=>{e.currentTarget.blur();if(g.stage===4)bossAttack(b.dataset.skill)});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAmbience();else if(musicOn&&g&&g.started)startAmbience()});
+// touch controls
+const TMAP={up:'w',down:'s',left:'a',right:'d'};
+document.querySelectorAll('.dpad button').forEach(bt=>{const k=TMAP[bt.dataset.dir];bt.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=true});['pointerup','pointercancel','pointerleave'].forEach(ev=>bt.addEventListener(ev,()=>{keys[k]=false}))});
+$('tDash').addEventListener('pointerdown',e=>{e.preventDefault();if(g.started&&!g.dialog)dash()});$('tAct').addEventListener('pointerdown',e=>{e.preventDefault();if(g.dialog)nextDialogue();else interact()});
+
+// portraits
+drawPortrait($('pvHe'),'H',false);drawPortrait($('pvShe'),'H',true);
+['K','D','P'].forEach(r=>{drawPortrait($('pv'+r),r,false);drawPortrait($('cv'+r),r,false)});
+reset();applyLang();requestAnimationFrame(frame);
+
+</script>
+</body>
+</html>
